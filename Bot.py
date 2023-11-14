@@ -37,6 +37,7 @@ def is_user_real(data,author_name,anything_else = None):
     return data
 
 async def send_to_bank(howmuch:int,ctx):
+    
     bank = open_file("bank.json")
     if (bank["points"]+howmuch) < 0:
         await ctx.send("Bank is out of money, sorry")
