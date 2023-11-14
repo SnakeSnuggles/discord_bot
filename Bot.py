@@ -25,6 +25,7 @@ def open_file(file_path:str):
 def is_user_real(data,author_name,anything_else = None):
     author_name_lower = author_name.lower()
 
+
     if author_name_lower not in data:
         data[author_name_lower] = {
             "points": 0,
