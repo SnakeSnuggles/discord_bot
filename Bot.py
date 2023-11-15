@@ -4,6 +4,7 @@ import random
 from datetime import datetime
 import json
 from discord.ext import commands
+import logging
 
 intents = discord.Intents.default()
 intents.typing = False
@@ -14,7 +15,7 @@ intents.members = True
 
 # Create a bot instance with a prefix and the intents
 bot = commands.Bot(command_prefix='!', intents=intents)
-
+logging.basicConfig(filename='commands.log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s')
 file_path = "C:\\Users\\User\\bot_token.txt"
 with open(file_path, 'r') as file:
         # Read the first line
@@ -25,6 +26,11 @@ def open_file(file_path:str):
         data = json.load(file)
     return data
 
+def debug(user,thingsthathappen:list):
+    logging.info(f"{user} used command {thingsthathappen[0]} the command did this: {thingsthathappen[1]}")
+    return
+
+#checks if user is real
 def is_user_real(data,author_name,anything_else = None):
     author_name_lower = author_name.lower()
 
@@ -103,6 +109,7 @@ async def on_member_ban(guild, user):
 #Games
 @bot.command()
 async def coin(ctx,*args):
+    
     file_path = "points.json"
     data = open_file(file_path)
     data = is_user_real(data,ctx.author.name)
@@ -112,23 +119,22 @@ async def coin(ctx,*args):
     if args[0] not in c.values():
         await ctx.send("You did not put heads or tails")
         return
-
+    
     if data[ctx.author.name.lower()]["points"] >= int(args[1]):
         await ctx.send(c[HorT])
         data[ctx.author.name.lower()]["points"] -= int(args[1])
         if c[HorT] == args[0]:
             data[ctx.author.name.lower()]["points"] += int(args[1]) + int(args[1])
             try:
-                send_to_bank((-int(args[1])),ctx)
+                await send_to_bank((-int(args[1])),ctx)
             except bobwillendthis:
-                data[ctx.author.name.lower()]["points"] += int(args[1])
+                #data[ctx.author.name.lower()]["points"] += int(args[1])
                 return
             await ctx.send(f"You won {int(args[1])*2}, you now have {points + int(args[1])}")
         
         else:
-            send_to_bank(int(args[1]),ctx)
+            await send_to_bank(int(args[1]),ctx)
             await ctx.send(f"You lost {args[1]}, you now have {points - int(args[1])}")
-
     with open(file_path, "w") as json_file:
         json.dump(data, json_file,indent=4)
 
