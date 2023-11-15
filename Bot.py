@@ -25,6 +25,8 @@ def open_file(file_path:str):
         data = json.load(file)
     return data
 
+
+#checks if user is real
 def is_user_real(data,author_name,anything_else = None):
     author_name_lower = author_name.lower()
 
