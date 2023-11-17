@@ -519,7 +519,7 @@ async def yourthoughts(ctx):
             await ctx.send("I think it's bad")
 
 @bot.command()
-async def list(ctx):
+async def command(ctx):
     await ctx.send(
 '''
 I will not tell you what these do:
@@ -538,7 +538,7 @@ I will not tell you what these do:
 !goodnoon (12pm-1pm)
 !ballsack
 !yourthoughts
-!list (I don't know why you'd need to know this if you just did it)
+!command (I don't know why you'd need to know this if you just did it)
 !ourlist (The title of the list),(what you add to the list)
 ```
 ''')
@@ -583,7 +583,7 @@ Docs
     no
 !yourthoughts
     says "I think it's good" or "I think it's bad" to your question
-!list
+!command
     shows the list of commands
 !ourlist (The title of the list),(what you add to the list)
     allows you to make a list of items saved for later
