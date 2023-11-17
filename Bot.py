@@ -123,7 +123,7 @@ async def coin(ctx,*args):
     
     if int(args[1]) < 0:
         await ctx.send("You can't bet negative points")
-
+        return
     await ctx.send(c[HorT])
     data[ctx.author.name.lower()]["points"] -= int(args[1])
     if c[HorT] == args[0]:
