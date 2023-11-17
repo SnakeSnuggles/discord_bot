@@ -4,7 +4,6 @@ import random
 from datetime import datetime
 import json
 from discord.ext import commands
-import logging
 
 intents = discord.Intents.default()
 intents.typing = False
@@ -15,7 +14,6 @@ intents.members = True
 
 # Create a bot instance with a prefix and the intents
 bot = commands.Bot(command_prefix='!', intents=intents)
-logging.basicConfig(filename='commands.log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s')
 file_path = "C:\\Users\\User\\bot_token.txt"
 with open(file_path, 'r') as file:
         # Read the first line
@@ -27,7 +25,6 @@ def open_file(file_path:str):
     return data
 
 def debug(user,thingsthathappen:list):
-    logging.info(f"{user} used command {thingsthathappen[0]} the command did this: {thingsthathappen[1]}")
     return
 
 #checks if user is real
