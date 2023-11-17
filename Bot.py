@@ -388,7 +388,7 @@ async def bank(ctx):
     file_path = "bank.json"
     data = open_file(file_path)
     points = "points"
-    ctx.send(f"Bank: \n ```{data[points]}```")
+    await ctx.send(f"Bank's points:\n```{data[points]}```")
 
 @bot.command()
 async def choose(ctx, *args):
@@ -525,6 +525,7 @@ async def list(ctx):
 I will not tell you what these do:
 ```
 !choose item,item,ect
+!bank
 !should
 !coin (heads or tails) (How much you want to bet)
 !rps
@@ -556,6 +557,8 @@ Docs
 ```
 !choose item,item,ect
     chooses from the list you provide
+!bank
+    shows how much the bank has
 !should
     says yes or no to the question you ask
 !coin (heads or tails) (How much you want to bet)
