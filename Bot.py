@@ -374,7 +374,7 @@ async def leaderboard(ctx):
     
     # Create a list of strings
     string = [f"{x[0]} points: {x[1]['points']:,}" for x in sorted_data]
-    string = string[0:9]
+    string = string[0:10]
     string = '\n'.join(string)
     await ctx.send("**Leaderboard:**\n" + "```" + string + "```")
 
