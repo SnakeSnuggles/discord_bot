@@ -117,21 +117,27 @@ async def coin(ctx,*args):
         await ctx.send("You did not put heads or tails")
         return
     
-    if data[ctx.author.name.lower()]["points"] >= int(args[1]):
-        await ctx.send(c[HorT])
-        data[ctx.author.name.lower()]["points"] -= int(args[1])
-        if c[HorT] == args[0]:
-            data[ctx.author.name.lower()]["points"] += int(args[1]) + int(args[1])
-            try:
-                await send_to_bank((-int(args[1])),ctx)
-            except bobwillendthis:
-                #data[ctx.author.name.lower()]["points"] += int(args[1])
-                return
-            await ctx.send(f"You won {int(args[1])*2}, you now have {points + int(args[1])}")
-        
-        else:
-            await send_to_bank(int(args[1]),ctx)
-            await ctx.send(f"You lost {args[1]}, you now have {points - int(args[1])}")
+    if data[ctx.author.name.lower()]["points"] <= int(args[1]):
+        await ctx.send("You do not have that much")
+        return
+    
+    if int(args[1]) < 0:
+        await ctx.send("You can't bet negative points")
+
+    await ctx.send(c[HorT])
+    data[ctx.author.name.lower()]["points"] -= int(args[1])
+    if c[HorT] == args[0]:
+        data[ctx.author.name.lower()]["points"] += int(args[1]) + int(args[1])
+        try:
+            await send_to_bank(-(int(args[1])),ctx)
+        except bobwillendthis:
+            #data[ctx.author.name.lower()]["points"] += int(args[1])
+            return
+        await ctx.send(f"You won {int(args[1])*2}, you now have {points + int(args[1])}")
+    
+    else:
+        await send_to_bank(int(args[1]),ctx)
+        await ctx.send(f"You lost {args[1]}, you now have {points - int(args[1])}")
     with open(file_path, "w") as json_file:
         json.dump(data, json_file,indent=4)
 
