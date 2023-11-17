@@ -363,7 +363,6 @@ async def void(ctx,*args):
         await ctx.send("You can't void negative points")
         return
     data[ctx.author.name.lower()]["points"]-=int(args[0])
-    await send_to_bank(int(args[0]),ctx)
     points = data[ctx.author.name.lower()]["points"]
     await ctx.send(f"You voided {args[0]} you now have {points}")
     with open(file_path, "w") as json_file:
