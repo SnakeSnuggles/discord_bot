@@ -117,7 +117,7 @@ async def coin(ctx,*args):
         await ctx.send("You did not put heads or tails")
         return
     
-    if data[ctx.author.name.lower()]["points"] <= int(args[1]):
+    if data[ctx.author.name.lower()]["points"] < int(args[1]):
         await ctx.send("You do not have that much")
         return
     
