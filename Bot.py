@@ -384,6 +384,13 @@ async def leaderboard(ctx):
     await ctx.send("**Leaderboard:**\n" + "```" + string + "```")
 
 @bot.command()
+async def bank(ctx):
+    file_path = "bank.json"
+    data = open_file(file_path)
+    points = "points"
+    ctx.send(f"Bank: \n ```{data[points]}```")
+
+@bot.command()
 async def choose(ctx, *args):
     choice = []
     for arg in args:
