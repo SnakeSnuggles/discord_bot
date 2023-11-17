@@ -275,48 +275,28 @@ async def goodnight(ctx):
 #end
 
 #Removing things
+class item:
+    def __init__(self,
+                 user_id:str,
+                 used_on:str = None,
+                 has_inlimited_uses:bool = True,
+                 number_of_uses:int = 1,
+                 cooldown_s:int = 0 
+                 ):
+        self.user_id = user_id
+        self.used_on = used_on
+        self.has_inlimited_uses = has_inlimited_uses
+        self.number_of_uses = number_of_uses
+        self.cooldown_s = cooldown_s
+    def get_info(file_path:str):
+        data = {}
+        with open(file_path,'r') as john:
+            data = json.load(json)
+        return data
+
 @bot.command()
 async def use(ctx,*args):
-    file_path = "points.json"
-    file = open(file_path)
-    points = json.load(file)
-    
-    print(f"splitting strings {args}")
-    args = " ".join(args)
-    print(f"splitting strings {args}")
-    args = args.split(',')
-    print(f"splitting strings {args}")
-
-    if args[0] not in points[ctx.author.name.lower()]["inventory"]:
-        print("does not have item in inventory")
-        return
-    print("has item in inventory")  
-    async def gate_keep():
-        if args[1] not in points:
-            ctx.send("User does not exist")
-            return
-
-        if "messages_to_delete" not in points[args[1]]:
-            points[args[1]].update({"messages_to_delete":0})
-
-        points[args[0]]["messages_to_delete"] += 1
-
-    items = {
-        "Gate keep": await gate_keep(),
-        "Shut up":78,
-        "Shut down":200,
-        "Reaction event":50,
-        "Giberrsish":200,
-        "Rat man":3000000,
-        "Get KK6000 a girlfriend for an hour":15000,
-        "Uselessness":0,
-        "Give KK6000 a bathroom break and a break from Jacob for 5 min":1000
-        }
-    items[args[0]]
-
-    points[ctx.author.name.lower()]["inventory"].remove(args[0])
-    with open(file_path, "w") as json_file:
-        json.dump(points, json_file,indent=4)
+    ...
 
 @bot.command()
 async def shop(ctx, *args):
