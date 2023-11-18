@@ -277,26 +277,54 @@ async def goodnight(ctx):
 #Removing things
 class item:
     def __init__(self,
-                 user_id:str,
+                 user:str,
                  used_on:str = None,
                  has_inlimited_uses:bool = True,
-                 number_of_uses:int = 1,
                  cooldown_s:int = 0 
                  ):
-        self.user_id = user_id
+        self.user_id = user
         self.used_on = used_on
         self.has_inlimited_uses = has_inlimited_uses
-        self.number_of_uses = number_of_uses
         self.cooldown_s = cooldown_s
-    def get_info(file_path:str):
-        data = {}
-        with open(file_path,'r') as john:
-            data = json.load(json)
-        return data
+    async def item_function(self,ctx):
+        await ctx.send("It did nothing")
+
+class pokiball(item):
+    async def item_function(self, ctx):
+        await ctx.send("You used poki ball")
+        
+
 
 @bot.command()
 async def use(ctx,*args):
-    ...
+    args = " ".join(args)
+    args = args.split(",")
+
+    data = open_file("points.json")
+    user = ctx.author.name.lower()
+    used_on = args[1]
+
+ 
+    items = {
+        "poki ball":pokiball(user=user,used_on=used_on,cooldown_s=15).item_function
+    }
+
+    if args[0] not in items:
+        await ctx.send("That item does not exist")
+        return
+    if args[0] not in data[user]["inventory"]:
+        await ctx.send("You do not have that item")
+        return
+    if args[1] not in data:
+        await ctx.send("That user does not exist")
+        return
+    
+    #data = data[user]["inventory"].remove(args[0])
+    await items[args[0]](ctx=ctx)
+    with open("points.json", "w") as json_file:
+        json.dump(data, json_file,indent=4)
+
+
 
 @bot.command()
 async def shop(ctx, *args):
