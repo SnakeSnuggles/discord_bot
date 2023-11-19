@@ -1,6 +1,6 @@
 {
     "jele7469": {
-        "points": 25,
+        "points": 85,
         "win_streak_rps": 1,
         "has_used_day_thing": [
             true,
@@ -48,12 +48,13 @@
             "Gate keep",
             "Shut up",
             "Shut down",
-            "Giberrsish"
+            "Giberrsish",
+            "pokeball belt"
         ]
     },
     "snakesnuggles": {
-        "points": 1040719667679,
-        "win_streak_rps": 1,
+        "points": 1040719667699,
+        "win_streak_rps": 2,
         "has_used_day_thing": [
             false,
             false,
@@ -83,6 +84,7 @@
             "pokeball",
             "pokeball",
             "pokeball",
+            "pokeball belt",
             "gun"
         ],
         "caught": [

@@ -187,6 +187,11 @@ async def rps(ctx):
                 result = f"{ctx.author.mention} wins! {player_choice.capitalize()} beats {bot_choice}.\n {ctx.author.mention} won {20 * getwinstreak} points"
                 data[ctx.author.name.lower()]["win_streak_rps"] += 1
                 data[ctx.author.name.lower()]["points"] += 20 * int(getwinstreak)
+                
+                pokegetchance = getwinstreak/100
+                if random.random() >= pokegetchance and "pokeball belt" in data[ctx.author.name.lower()]["inventory"]:
+                    data[ctx.author.name.lower()]["inventory"].append("pokeball")
+                    await ctx.send("You got a pokeball")
                 await send_to_bank(-(20*int(getwinstreak)),ctx)
             except bobwillendthis:
                 return
@@ -312,14 +317,14 @@ class gun(item):
 
         bank_file = "bank.json"
         bank = open_file(bank_file)
-        inventory = data[ctx.author.name.lower()]["inventory"]
-        if "gun" not in inventory:
+        inv = data[ctx.author.name.lower()]["inventory"]
+        if "gun" not in inv:
             ctx.send("You do not have a gun")
             return
-        if "bullet" not in inventory:
+        if "bullet" not in inv:
             ctx.send("You do not have a bullet")
             return
-        if "balaclava" not in inventory:
+        if "balaclava" not in inv:
             ctx.send("You do not have a balaclava")
             return
 
@@ -359,6 +364,14 @@ async def pokemon(ctx,*args):
 @bot.command()
 async def debug(ctx,*args):
     await ctx.send(args)
+
+@bot.command()
+async def inventory(ctx):
+    data = open_file("points.json")
+
+    inv = data[ctx.author.name.lower()]["inventory"]
+    inv = "\n".join(inv)
+    await ctx.send("Inventory:\n```" + inv + "```")
 
 @bot.command()
 async def use(ctx,*args):
