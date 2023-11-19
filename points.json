@@ -85,7 +85,8 @@
             "pokeball",
             "pokeball",
             "pokeball belt",
-            "gun"
+            "gun",
+            "fanum tax wand"
         ],
         "caught": [
             "jele7469",
@@ -257,7 +258,7 @@
         "inventory": []
     },
     "cobid18": {
-        "points": -22532520570657462282,
+        "points": 250,
         "win_streak_rps": 1,
         "has_used_day_thing": [
             false,

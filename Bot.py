@@ -282,10 +282,12 @@ class item:
                  user:str,
                  used_on:str = None,
                  has_inlimited_uses:bool = False,
+                 has_more_functions=False
                  ):
         self.user = user
         self.used_on = used_on
         self.has_inlimited_uses = has_inlimited_uses
+        self.has_more_functions = has_more_functions
 
     async def item_function(self,ctx):
         await ctx.send("It did nothing")
@@ -337,12 +339,29 @@ class gun(item):
         else:
             await ctx.send("You failed")
 
-        inventory.remove("balaclava")
-        inventory.remove("bullet")
+        inv.remove("balaclava")
+        inv.remove("bullet")
         return data
-        
+class fanum_tax(item):
+    async def item_function(self, ctx,function:str):
+        file_path = "points.json"
+        data = open_file(file_path)
 
-
+        if function == "buff":
+            await ctx.send("This is still being worked on please stand by")
+        if function == "debt":
+            if data[self.used_on]["points"] == 250:
+                data[self.used_on]["points"] = -250
+                await ctx.send(f"You set {self.used_on} 250 debt")
+            else:
+                if data[self.used_on]["points"] < 0:
+                    await ctx.send("You can't put people into debt more debt")
+                else:
+                    data[self.used_on]["points"] -= 250
+                    await ctx.send(f"You got rid of 250 points from {self.used_on}'s bank")
+        else:
+            await ctx.send("That function does not exist")
+        return data
 @bot.command()
 async def pokemon(ctx,*args):
     args = " ".join(args)
@@ -389,9 +408,11 @@ async def use(ctx,*args):
     used_on = used_on_real()
     pokeballinst = pokeball(user=user,used_on=used_on)
     guninst = gun(user=user,has_inlimited_uses=True)
+    fanum_taxinst = fanum_tax(user=user,used_on=used_on,has_inlimited_uses=True,has_more_functions=True)
     items = {
         "pokeball":pokeballinst,
-        "gun":guninst
+        "gun":guninst,
+        "fanum tax wand":fanum_taxinst
     }
 
     if args[0] not in items:
@@ -407,7 +428,11 @@ async def use(ctx,*args):
     
     if items[args[0]].has_inlimited_uses == False:
         data[user]["inventory"].remove(args[0])
-    data = await items[args[0]].item_function(ctx=ctx)
+    if items[args[0]].has_more_functions != True:
+        data = await items[args[0]].item_function(ctx=ctx)
+    else:
+        data = await items[args[0]].item_function(ctx=ctx,function=args[2])
+
     with open("points.json", "w") as json_file:
         json.dump(data, json_file,indent=4)
 
