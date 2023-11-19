@@ -319,28 +319,26 @@ class gun(item):
 
         bank_file = "bank.json"
         bank = open_file(bank_file)
-        inv = data[ctx.author.name.lower()]["inventory"]
-        if "gun" not in inv:
-            ctx.send("You do not have a gun")
-            return
-        if "bullet" not in inv:
-            ctx.send("You do not have a bullet")
-            return
-        if "balaclava" not in inv:
-            ctx.send("You do not have a balaclava")
+
+        inv = data[ctx.author.name.lower()].get("inventory", [])
+        if "bullet" not in inv or "balaclava" not in inv:
+            await ctx.send("You do not have the required items.")
             return
 
         robsucceses = random.randint(1,3)
 
-        if robsucceses == 1:
+        if robsucceses != 1:
             howmuch_to_steal = random.randint(1,bank["points"])
             data[ctx.author.name.lower()]["points"] += howmuch_to_steal
-            await ctx.send(f"You did it, you stole {howmuch_to_steal} point(s)")
+            await ctx.send(f"You did it, you stole {howmuch_to_steal} point(s) from the bank")
         else:
             await ctx.send("You failed")
-
-        inv.remove("balaclava")
-        inv.remove("bullet")
+        if "balaclava" in inv:
+            inv.remove("balaclava")
+        if "bullet" in inv:
+            inv.remove("bullet")
+        with open(bank_file, "w") as json_file:
+            json.dump(bank, json_file,indent=4)
         return data
 class fanum_tax(item):
     async def item_function(self, ctx,function:str):
@@ -428,10 +426,10 @@ async def use(ctx,*args):
     
     if items[args[0]].has_inlimited_uses == False:
         data[user]["inventory"].remove(args[0])
-    if items[args[0]].has_more_functions != True:
-        data = await items[args[0]].item_function(ctx=ctx)
-    else:
+    if items[args[0]].has_more_functions == True:
         data = await items[args[0]].item_function(ctx=ctx,function=args[2])
+    else:
+        data = await items[args[0]].item_function(ctx=ctx)
 
     with open("points.json", "w") as json_file:
         json.dump(data, json_file,indent=4)
