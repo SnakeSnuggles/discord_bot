@@ -3,7 +3,7 @@ from discord.ext import commands
 import random
 from datetime import datetime
 import json
-from discord.ext import commands
+import copy
 
 intents = discord.Intents.default()
 intents.typing = False
@@ -23,9 +23,6 @@ def open_file(file_path:str):
     with open(file_path) as file:
         data = json.load(file)
     return data
-
-def debug(user,thingsthathappen:list):
-    return
 
 #checks if user is real
 def is_user_real(data,author_name,anything_else = None):
@@ -300,16 +297,36 @@ class pokeball(item):
         choice = random.random()
         if chance >= choice:
             await ctx.send("You did it")
-            print("snakesnuggles:",data[self.user])
             if "caught" not in data[self.user]:
                 data[self.user]["caught"] = []
             data[self.user]["caught"].append(self.used_on)
-            print("snakesnuggles:",data[self.user])
-            with open(file_path, "w") as json_file:
-                json.dump(data,json_file,indent=4)
+
         else:
             await ctx.send("They got away, oh well")
-        
+        return data
+
+
+@bot.command()
+async def pokemon(ctx,*args):
+    args = " ".join(args)
+    args = args.split(",")
+    file_path = "points.json"
+    data = open_file(file_path)
+    custom_ctx = copy.copy(ctx)
+
+    if args[0] not in data[ctx.author.name.lower()]["caught"]:
+        ctx.send("You have not caught that person")
+        return
+    custom_ctx.author.name = str(args[0])
+
+    args[2] = args[2].split(" ")
+    print(args[2])
+    data[ctx.author.name.lower()]["caught"].remove(args[0])
+    await gift(custom_ctx,args[2][0],args[2][1])
+ 
+@bot.command()
+async def debug(ctx,*args):
+    await ctx.send(args)
 
 @bot.command()
 async def use(ctx,*args):
@@ -338,7 +355,7 @@ async def use(ctx,*args):
     
     if items[args[0]].has_inlimited_uses == False:
         data[user]["inventory"].remove(args[0])
-    await items[args[0]].item_function(ctx=ctx)
+    data = await items[args[0]].item_function(ctx=ctx)
     with open("points.json", "w") as json_file:
         json.dump(data, json_file,indent=4)
 
