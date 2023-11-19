@@ -339,6 +339,8 @@ class gun(item):
             inv.remove("bullet")
         with open(bank_file, "w") as json_file:
             json.dump(bank, json_file,indent=4)
+        with open(file_path, "w") as json_file:
+            json.dump(data, json_file,indent=4)
         return data
 class fanum_tax(item):
     async def item_function(self, ctx,function:str):
