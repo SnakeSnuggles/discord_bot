@@ -281,6 +281,7 @@ class item:
         self.user = user
         self.used_on = used_on
         self.has_inlimited_uses = has_inlimited_uses
+
     async def item_function(self,ctx):
         await ctx.send("It did nothing")
 
@@ -304,6 +305,37 @@ class pokeball(item):
         else:
             await ctx.send("They got away, oh well")
         return data
+class gun(item):
+    async def item_function(self, ctx):
+        file_path = "points.json"
+        data = open_file(file_path)
+
+        bank_file = "bank.json"
+        bank = open_file(bank_file)
+        inventory = data[ctx.author.name.lower()]["inventory"]
+        if "gun" not in inventory:
+            ctx.send("You do not have a gun")
+            return
+        if "bullet" not in inventory:
+            ctx.send("You do not have a bullet")
+            return
+        if "balaclava" not in inventory:
+            ctx.send("You do not have a balaclava")
+            return
+
+        robsucceses = random.randint(1,3)
+
+        if robsucceses == 1:
+            howmuch_to_steal = random.randint(1,bank["points"])
+            data[ctx.author.name.lower()]["points"] += howmuch_to_steal
+            await ctx.send(f"You did it, you stole {howmuch_to_steal} point(s)")
+        else:
+            await ctx.send("You failed")
+
+        inventory.remove("balaclava")
+        inventory.remove("bullet")
+        return data
+        
 
 
 @bot.command()
@@ -335,11 +367,18 @@ async def use(ctx,*args):
 
     data = open_file("points.json")
     user = ctx.author.name.lower()
-    used_on = args[1]
-
- 
+    def used_on_real():
+        try:
+            used_on = args[1]
+            return used_on
+        except IndexError:
+            pass
+    used_on = used_on_real()
+    pokeballinst = pokeball(user=user,used_on=used_on)
+    guninst = gun(user=user,has_inlimited_uses=True)
     items = {
-        "pokeball":pokeball(user=user,used_on=used_on)
+        "pokeball":pokeballinst,
+        "gun":guninst
     }
 
     if args[0] not in items:
