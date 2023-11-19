@@ -279,21 +279,37 @@ class item:
     def __init__(self,
                  user:str,
                  used_on:str = None,
-                 has_inlimited_uses:bool = True,
-                 cooldown_s:int = 0 
+                 has_inlimited_uses:bool = False,
                  ):
-        self.user_id = user
+        self.user = user
         self.used_on = used_on
         self.has_inlimited_uses = has_inlimited_uses
-        self.cooldown_s = cooldown_s
     async def item_function(self,ctx):
         await ctx.send("It did nothing")
 
-class pokiball(item):
+class pokeball(item):
     async def item_function(self, ctx):
-        await ctx.send("You used poki ball")
+        file_path = "points.json"
+        data = open_file(file_path)
+        data = is_user_real(data,self.user)
+        if data[self.user]["points"] <= 0:
+            points = data[self.user]["points"]
+            await ctx.send(f"Yea right, nice try you got {points}")
+            return
+        chance = data[self.user]["points"] / data[self.used_on]["points"]
+        choice = random.random()
+        if chance >= choice:
+            await ctx.send("You did it")
+            print("snakesnuggles:",data[self.user])
+            if "caught" not in data[self.user]:
+                data[self.user]["caught"] = []
+            data[self.user]["caught"].append(self.used_on)
+            print("snakesnuggles:",data[self.user])
+            with open(file_path, "w") as json_file:
+                json.dump(data,json_file,indent=4)
+        else:
+            await ctx.send("They got away, oh well")
         
-
 
 @bot.command()
 async def use(ctx,*args):
@@ -306,7 +322,7 @@ async def use(ctx,*args):
 
  
     items = {
-        "poki ball":pokiball(user=user,used_on=used_on,cooldown_s=15).item_function
+        "pokeball":pokeball(user=user,used_on=used_on)
     }
 
     if args[0] not in items:
@@ -315,12 +331,14 @@ async def use(ctx,*args):
     if args[0] not in data[user]["inventory"]:
         await ctx.send("You do not have that item")
         return
-    if args[1] not in data:
-        await ctx.send("That user does not exist")
-        return
+    if items[args[0]].used_on != None:
+        if args[1] not in data:
+            await ctx.send("That user does not exist")
+            return
     
-    #data = data[user]["inventory"].remove(args[0])
-    await items[args[0]](ctx=ctx)
+    if items[args[0]].has_inlimited_uses == False:
+        data[user]["inventory"].remove(args[0])
+    await items[args[0]].item_function(ctx=ctx)
     with open("points.json", "w") as json_file:
         json.dump(data, json_file,indent=4)
 
