@@ -522,7 +522,21 @@ async def leaderboard(ctx):
             "Octodecillion",
             "Novemdecillion",
             "Vigintillion",
-            "Centillion"
+            "Centillion",
+            "Duckecillion",
+            "Slyilliton",
+            "Januarillion",
+            "Februarillion",
+            "Marchillion",
+            "Aprillion",
+            "Maillion",
+            "Junillion",
+            "Julillion",
+            "Augustesillion",
+            "Septembillion",
+            "Octobillion",
+            "Novembecillion",
+            "Decembillion",
                     ]
         newnumbers = []
         for number in numbers:
@@ -538,10 +552,10 @@ async def leaderboard(ctx):
 
         pointsthing = points[:cutoff_point]
 
-        if numberlength >= 7 and numberlength < 66:
+        if numberlength >= 7 and numberlength < 99:
             return f"{pointsthing} {number[numberlength]}" 
-        elif numberlength > 65: 
-            return "You're rich" 
+        elif numberlength > 99: 
+            return "You're rich"
         else: 
             return points
     # Create a list of strings
