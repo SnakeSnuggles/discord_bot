@@ -541,7 +541,7 @@ async def leaderboard(ctx):
         if numberlength >= 7 and numberlength < 66:
             return f"{pointsthing} {number[numberlength]}" 
         elif numberlength > 65: 
-            return "man you're rich" 
+            return "You're rich" 
         else: 
             return points
     # Create a list of strings
