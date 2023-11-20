@@ -239,6 +239,9 @@ class responding_to_times:
             data = open_file(file_path)
             user_id = user.name.lower()
             data = is_user_real(data,user_id)
+            if "has_used_day_thing" not in data[user_id]:
+                data[user_id]["has_used_day_thing"] = [False,False,False]
+
             if data[user_id]["has_used_day_thing"][current] == True:return
             data[user_id]["has_used_day_thing"][current] = True
             with open(file_path, "w") as json_file:
@@ -252,7 +255,7 @@ class responding_to_times:
             channel = bot.get_channel(channel_id)
             if channel:
                 await channel.send(self.good_responce)
-                add_points(user,20)
+                await add_points(user,20)
                 setting_has_used_day(current,user)
             else:
                 print(f"Channel with ID {channel_id} not found.")
@@ -407,11 +410,11 @@ async def use(ctx,*args):
             pass
     used_on = used_on_real()
     pokeballinst = pokeball(user=user,used_on=used_on)
-    guninst = gun(user=user,has_inlimited_uses=True)
+    #guninst = gun(user=user,has_inlimited_uses=True)
     fanum_taxinst = fanum_tax(user=user,used_on=used_on,has_inlimited_uses=True,has_more_functions=True)
     items = {
         "pokeball":pokeballinst,
-        "gun":guninst,
+        #"gun":guninst,
         "fanum tax wand":fanum_taxinst
     }
 
