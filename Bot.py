@@ -499,7 +499,7 @@ async def leaderboard(ctx):
     
     def points_to_readable(points:int):
         numbers_amounts = []
-        for x in range(6,66):
+        for x in range(6,1000):
             numbers_amounts.append(x)
         numbers = [
             "Million"
