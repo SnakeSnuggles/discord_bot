@@ -354,15 +354,15 @@ class fanum_tax(item):
         if function == "buff":
             await ctx.send("This is still being worked on please stand by")
         if function == "debt":
-            if data[self.used_on]["points"] == 250:
-                data[self.used_on]["points"] = -250
-                await ctx.send(f"You set {self.used_on} 250 debt")
+            if data[self.used_on]["points"] == 2500:
+                data[self.used_on]["points"] = -2500
+                await ctx.send(f"You set {self.used_on} 2500 debt")
             else:
                 if data[self.used_on]["points"] < 0:
                     await ctx.send("You can't put people into debt more debt")
                 else:
-                    data[self.used_on]["points"] -= 250
-                    await ctx.send(f"You got rid of 250 points from {self.used_on}'s bank")
+                    data[self.used_on]["points"] -= 2500
+                    await ctx.send(f"You got rid of 2500 points from {self.used_on}'s bank")
         else:
             await ctx.send("That function does not exist")
         with open(file_path, "w") as json_file:
