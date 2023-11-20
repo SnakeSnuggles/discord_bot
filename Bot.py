@@ -14,8 +14,8 @@ intents.members = True
 
 # Create a bot instance with a prefix and the intents
 bot = commands.Bot(command_prefix='!', intents=intents)
-file_path = "C:\\Users\\User\\bot_token.txt"
-with open(file_path, 'r') as file:
+bot_token_file = "C:\\Users\\User\\bot_token.txt"
+with open(bot_token_file, 'r') as file:
         # Read the first line
         bot_Token = file.readline()
 
