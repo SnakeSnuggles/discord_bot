@@ -1,51 +1,50 @@
-import json
+def points_to_readable(points:int):
+    numbers_amounts = []
+    for x in range(6,66):
+        numbers_amounts.append(x)
+    numbers = [
+        "Million"
+        "Billion",
+        "Trillion",
+        "Quadrillion",
+        "Quintillion",
+        "Sextillion",
+        "Septillion",
+        "Octillion",
+        "Nonillion",
+        "Decillion",
+        "Undecillion",
+        "Duodecillion",
+        "Tredecillion",
+        "Quattuordecillion",
+        "Quindecillion",
+        "Sexdecillion",
+        "Septendecillion",
+        "Octodecillion",
+        "Novemdecillion",
+        "Vigintillion",
+        "Centillion"
+                ]
+    newnumbers = []
+    for number in numbers:
+        newnumbers.append(number)
+        newnumbers.append(number)
+        newnumbers.append(number)
+    number = dict(zip(numbers_amounts,newnumbers))
+    
+    points = str(points)
+    numberlength = len(points)
 
+    cutoff_point = numberlength % 6
 
-def ourlist(ctx,*args):
-    def responding(ctx,responce):
-        if type(responce) == str:
-            print(responce)
-            return
-        for x in responce:print(x)
-    filepath = "C:\\Users\\User\\OneDrive\\Desktop\\coding\\Discord Bot\\listjson.json"
-    file = open(filepath)
-    data = json.load(file)
-    responce = "Bro's an idiot if he sees this message"
+    pointsthing = points[:cutoff_point]
+    
+    if numberlength >= 7 and numberlength < 66:
+        return f"{pointsthing} {number[numberlength]}" 
+    elif numberlength > 65: 
+        return "man you're rich" 
+    else: 
+        return points
 
-    #This happens when there is nothing in args
-    ''.join(args)
-    ','.split(args)
-    if len(args) == 0:
-        responce = list(responce)
-        responce.clear()
-        for x in data:
-             responce.append(x)
-        responding(ctx,responce)
-    #This happens when we have only one arg in which case we print everything in the list. If there is no list of that type we should then display "No valid list"
-    if len(args) == 1:
-        responce = list(responce)
-        responce.clear()
-        try:
-            responce.append(args[0]+":")
-            for x in data[args[0]]:
-                responce.append(x)
-        except KeyError:responce.append("You did not put a valid list")
-        responding(ctx,responce)
-    #adds everything after the list name to that list, if there is no list of that name then we make a new list and add the text to there
-    if len(args) >= 2:
-        responce = list(responce)
-        responce.clear()
-        responce.append(args[0]+":")
-
-        if args[0] in data:
-            data[args[0]].append(args[1:])
-        else:
-            data[args[0]] = [args[1:]]
-
-        data[args[0]][len(data[args[0]])-1] = "\n".join(data[args[0]][len(data[args[0]])-1])
-        responding(ctx,responce)
-
-    #adds everything back to the file
-    with open(filepath, "w") as json_file:
-        json.dump(data, json_file)
-ourlist(0,"Elias' Revenge")
+points = points_to_readable(100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
+print(points)
