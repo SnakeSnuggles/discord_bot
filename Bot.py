@@ -314,7 +314,8 @@ class pokeball(item):
 
         else:
             await ctx.send("They got away, oh well")
-        return data
+        with open(file_path, "w") as json_file:
+            json.dump(data, json_file,indent=4)
 class gun(item):
     async def item_function(self, ctx):
         file_path = "points.json"
@@ -344,7 +345,7 @@ class gun(item):
             json.dump(bank, json_file,indent=4)
         with open(file_path, "w") as json_file:
             json.dump(data, json_file,indent=4)
-        return data
+
 class fanum_tax(item):
     async def item_function(self, ctx,function:str):
         file_path = "points.json"
@@ -364,7 +365,8 @@ class fanum_tax(item):
                     await ctx.send(f"You got rid of 250 points from {self.used_on}'s bank")
         else:
             await ctx.send("That function does not exist")
-        return data
+        with open(file_path, "w") as json_file:
+            json.dump(data, json_file,indent=4)
 @bot.command()
 async def pokemon(ctx,*args):
     args = " ".join(args)
@@ -410,12 +412,14 @@ async def use(ctx,*args):
             pass
     used_on = used_on_real()
     pokeballinst = pokeball(user=user,used_on=used_on)
-    #guninst = gun(user=user,has_inlimited_uses=True)
+    guninst = gun(user=user,has_inlimited_uses=True)
     fanum_taxinst = fanum_tax(user=user,used_on=used_on,has_inlimited_uses=True,has_more_functions=True)
+    uselessnessinst = item(user=user)
     items = {
         "pokeball":pokeballinst,
-        #"gun":guninst,
-        "fanum tax wand":fanum_taxinst
+        "gun":guninst,
+        "fanum tax wand":fanum_taxinst,
+        "Uselessness":uselessnessinst
     }
 
     if args[0] not in items:
@@ -428,18 +432,15 @@ async def use(ctx,*args):
         if args[1] not in data:
             await ctx.send("That user does not exist")
             return
-    
+
     if items[args[0]].has_inlimited_uses == False:
         data[user]["inventory"].remove(args[0])
-    if items[args[0]].has_more_functions == True:
-        data = await items[args[0]].item_function(ctx=ctx,function=args[2])
-    else:
-        data = await items[args[0]].item_function(ctx=ctx)
-
     with open("points.json", "w") as json_file:
         json.dump(data, json_file,indent=4)
-
-
+    if items[args[0]].has_more_functions == True:
+        await items[args[0]].item_function(ctx=ctx,function=args[2])
+    else:
+        await items[args[0]].item_function(ctx=ctx)
 
 @bot.command()
 async def shop(ctx, *args):
