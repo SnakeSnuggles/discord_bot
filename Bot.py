@@ -661,8 +661,7 @@ async def ballsack(ctx):
 async def rob(ctx, *args):
 
     file_path = "points.json"
-    file = open(file_path)
-    data = json.load(file)
+    data = open_file(file_path)
 
     data = is_user_real(data,ctx.author.name)
 
