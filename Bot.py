@@ -358,7 +358,7 @@ class fanum_tax(item):
                 data[self.used_on]["points"] = -2500
                 await ctx.send(f"You set {self.used_on} 2500 debt")
             else:
-                if data[self.used_on]["points"] < 0:
+                if data[self.used_on]["points"] < 0 and self.used_on != "elichat3025":
                     await ctx.send("You can't put people into debt more debt")
                 else:
                     data[self.used_on]["points"] -= 2500
