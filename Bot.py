@@ -663,7 +663,8 @@ async def rob(ctx, *args):
     file_path = "points.json"
     data = open_file(file_path)
 
-    data = is_user_real(data,ctx.author.name)
+    if 'points' not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["points"] = 0
 
     if args[0] not in data:
         await ctx.send("You did not put a valid user")
@@ -680,13 +681,13 @@ async def rob(ctx, *args):
 
     chance = int(args[1])/data[args[0]]["points"]
     choice = random.random()
-
+    #good
     if chance <= choice:
         data[args[0]]["points"] -= int(args[1])
         data[ctx.author.name.lower()]["points"] += int(args[1])
         await ctx.send(f"You stole {args[1]} point(s) from {args[0]}")
+    #bad
     else:
-        data[args[0]]["points"] += int(args[1])
         data[ctx.author.name.lower()]["points"] -= int(args[1])
         await send_to_bank(int(args[1]),ctx)
         await ctx.send(f"You failed now the bank gets {args[1]} point(s) from you. LOL")
