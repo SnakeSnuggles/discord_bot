@@ -549,19 +549,19 @@ async def leaderboard(ctx):
             newnumbers.append(number)
         number = dict(zip(numbers_amounts,newnumbers))
 
-        points = str(points)
-        numberlength = len(points)
+        pointsstr = str(points)
+        numberlength = len(pointsstr)
 
         cutoff_point = numberlength % 6
-
-        pointsthing = points[:cutoff_point]
+        
+        pointsthing = pointsstr[:cutoff_point]
 
         if numberlength >= 7 and numberlength < 99:
             return f"{pointsthing} {number[numberlength]}" 
         elif numberlength > 99: 
             return "You're rich"
         else: 
-            return points
+            return pointsstr
     # Create a list of strings
     
     string = [f"{x[0]} points: {points_to_readable(x[1]['points'])}" for x in sorted_data]
