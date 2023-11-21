@@ -122,6 +122,7 @@ async def coin(ctx,*args):
         await ctx.send("You can't bet negative points")
         return
     if "Helm of Statistical Advantage" in data[ctx.author.name.lower()]["inventory"] and data[ctx.author.name.lower()]["helm_on"] == True:
+        data[ctx.author.name.lower()]["points"] -= int(args[1])
         if random.randint(1,100) != 1:
             await ctx.send(args[0])
             data[ctx.author.name.lower()]["points"] += int(args[1]) + int(args[1])
