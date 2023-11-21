@@ -3,7 +3,7 @@ from discord.ext import commands
 import random
 from datetime import datetime
 import json
-import copy
+
 
 intents = discord.Intents.default()
 intents.typing = False
@@ -121,6 +121,26 @@ async def coin(ctx,*args):
     if int(args[1]) < 0:
         await ctx.send("You can't bet negative points")
         return
+    if "Helm of Statistical Advantage" in data[ctx.author.name.lower()]["inventory"] and data[ctx.author.name.lower()]["helm_on"] == True:
+        if random.randint(1,100) != 1:
+            await ctx.send(args[0])
+            data[ctx.author.name.lower()]["points"] += int(args[1]) + int(args[1])
+            try:
+                await send_to_bank(-(int(args[1])),ctx)
+            except bobwillendthis:
+                #data[ctx.author.name.lower()]["points"] += int(args[1])
+                return
+            await ctx.send(f"You won {int(args[1])*2}, you now have {points + int(args[1])}")
+            with open(file_path, "w") as json_file:
+                json.dump(data, json_file,indent=4)
+            return
+        else:
+            await send_to_bank(int(args[1]),ctx)
+            await ctx.send(f"You lost {args[1]}, you now have {points - int(args[1])}")
+            with open(file_path, "w") as json_file:
+                json.dump(data, json_file,indent=4)
+            return
+    
     await ctx.send(c[HorT])
     data[ctx.author.name.lower()]["points"] -= int(args[1])
     if c[HorT] == args[0]:
@@ -370,23 +390,42 @@ class fanum_tax(item):
             await ctx.send("That function does not exist")
         with open(file_path, "w") as json_file:
             json.dump(data, json_file,indent=4)
+
+class statistical_advantage(item):
+    async def item_function(self, ctx):
+        file_path = "points.json"
+        data = open_file(file_path)
+
+        if "helm_on" not in data[self.user]:
+            data[self.user]["helm_on"] = False
+        
+        if data[self.user]["helm_on"] == True:
+            data[self.user]["helm_on"] = False
+            await ctx.send("Helm is now off")
+        elif data[self.user]["helm_on"] == False:
+            await ctx.send("Helm is now on")
+            data[self.user]["helm_on"] = True
+        
+        with open(file_path, "w") as json_file:
+            json.dump(data, json_file,indent=4)
+
 @bot.command()
 async def pokemon(ctx,*args):
     args = " ".join(args)
     args = args.split(",")
     file_path = "points.json"
     data = open_file(file_path)
-    custom_ctx = copy.copy(ctx)
+    # custom_ctx = copy.copy(ctx)
 
     if args[0] not in data[ctx.author.name.lower()]["caught"]:
         ctx.send("You have not caught that person")
         return
-    custom_ctx.author.name = str(args[0])
+    # custom_ctx.author.name = str(args[0])
 
     args[2] = args[2].split(" ")
     print(args[2])
     data[ctx.author.name.lower()]["caught"].remove(args[0])
-    await gift(custom_ctx,args[2][0],args[2][1])
+    # await gift(custom_ctx,args[2][0],args[2][1])
  
 @bot.command()
 async def debug(ctx,*args):
@@ -418,11 +457,13 @@ async def use(ctx,*args):
     guninst = gun(user=user,has_inlimited_uses=True)
     fanum_taxinst = fanum_tax(user=user,used_on=used_on,has_inlimited_uses=True,has_more_functions=True)
     uselessnessinst = item(user=user)
+    statistical_advantageinst = statistical_advantage(user=user,has_inlimited_uses=True)
     items = {
         "pokeball":pokeballinst,
         "gun":guninst,
         "fanum tax wand":fanum_taxinst,
-        "Uselessness":uselessnessinst
+        "Uselessness":uselessnessinst,
+        "Helm of Statistical Advantage":statistical_advantageinst
     }
 
     if args[0] not in items:
@@ -681,6 +722,23 @@ async def rob(ctx, *args):
     if int(args[1])>data[ctx.author.name.lower()]["points"]:
         await ctx.send(f"You can't rob more than you have")
         return
+
+    if "Helm of Statistical Advantage" in data[ctx.author.name.lower()]["inventory"] and data[ctx.author.name.lower()]["helm_on"] == True:
+        if random.randint(1,100) != 1:
+            data[args[0]]["points"] -= int(args[1])
+            data[ctx.author.name.lower()]["points"] += int(args[1])
+            await ctx.send(f"You stole {args[1]} point(s) from {args[0]}")
+            with open(file_path, "w") as json_file:
+                json.dump(data, json_file,indent=4)
+            return
+        else:
+            data[ctx.author.name.lower()]["points"] -= int(args[1])
+            await send_to_bank(int(args[1]),ctx)
+            await ctx.send(f"You failed now the bank gets {args[1]} point(s) from you. LOL")
+            with open(file_path, "w") as json_file:
+                json.dump(data, json_file,indent=4)
+            return
+
 
     chance = int(args[1])/data[args[0]]["points"]
     choice = random.random()
