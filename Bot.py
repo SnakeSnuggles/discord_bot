@@ -324,7 +324,7 @@ class gun(item):
         bank_file = "bank.json"
         bank = open_file(bank_file)
 
-        inv = data[ctx.author.name.lower()].get("inventory", [])
+        inv = data[ctx.author.name.lower()]["inventory"]
         if "bullet" not in inv:
             await ctx.send("You don't have bullet.")
             return
