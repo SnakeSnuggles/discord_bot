@@ -325,10 +325,13 @@ class gun(item):
         bank = open_file(bank_file)
 
         inv = data[ctx.author.name.lower()].get("inventory", [])
-        if "bullet" not in inv or "balaclava" not in inv:
-            await ctx.send("You do not have the required items.")
+        if "bullet" not in inv:
+            await ctx.send("You don't have bullet.")
             return
-
+        if "balaclava" not in inv:
+            await ctx.send("You don't have balaclava.")
+            return
+        
         robsucceses = random.randint(1,3)
 
         if robsucceses != 1:
