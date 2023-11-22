@@ -123,24 +123,17 @@ async def coin(ctx,*args):
         return
     if "Helm of Statistical Advantage" in data[ctx.author.name.lower()]["inventory"] and data[ctx.author.name.lower()]["helm_on"] == True:
         data[ctx.author.name.lower()]["points"] -= int(args[1])
-        if random.randint(1,100) != 1:
-            await ctx.send(args[0])
-            data[ctx.author.name.lower()]["points"] += int(args[1]) + int(args[1])
-            try:
+        await ctx.send(args[0])
+        data[ctx.author.name.lower()]["points"] += int(args[1]) + int(args[1])
+        try:
                 await send_to_bank(-(int(args[1])),ctx)
-            except bobwillendthis:
+        except bobwillendthis:
                 #data[ctx.author.name.lower()]["points"] += int(args[1])
                 return
-            await ctx.send(f"You won {int(args[1])*2}, you now have {points + int(args[1])}")
-            with open(file_path, "w") as json_file:
+        await ctx.send(f"You won {int(args[1])*2}, you now have {points + int(args[1])}")
+        with open(file_path, "w") as json_file:
                 json.dump(data, json_file,indent=4)
-            return
-        else:
-            await send_to_bank(int(args[1]),ctx)
-            await ctx.send(f"You lost {args[1]}, you now have {points - int(args[1])}")
-            with open(file_path, "w") as json_file:
-                json.dump(data, json_file,indent=4)
-            return
+        return
     
     await ctx.send(c[HorT])
     data[ctx.author.name.lower()]["points"] -= int(args[1])
@@ -725,20 +718,13 @@ async def rob(ctx, *args):
         return
 
     if "Helm of Statistical Advantage" in data[ctx.author.name.lower()]["inventory"] and data[ctx.author.name.lower()]["helm_on"] == True:
-        if random.randint(1,100) != 1:
             data[args[0]]["points"] -= int(args[1])
             data[ctx.author.name.lower()]["points"] += int(args[1])
             await ctx.send(f"You stole {args[1]} point(s) from {args[0]}")
             with open(file_path, "w") as json_file:
                 json.dump(data, json_file,indent=4)
             return
-        else:
-            data[ctx.author.name.lower()]["points"] -= int(args[1])
-            await send_to_bank(int(args[1]),ctx)
-            await ctx.send(f"You failed now the bank gets {args[1]} point(s) from you. LOL")
-            with open(file_path, "w") as json_file:
-                json.dump(data, json_file,indent=4)
-            return
+
 
 
     chance = int(args[1])/data[args[0]]["points"]
