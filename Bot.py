@@ -772,6 +772,7 @@ I will not tell you what these do:
 !coin (heads or tails) (How much you want to bet)
 !rps
 !words
+!use (item) (args)
 !void (how much)
 !gift (user) (How much)
 !shop (what you want to but, write nothing if you want to see the list)
@@ -809,6 +810,8 @@ Docs
     play rps, get a win streak
 !words
     just use it
+!use (item),(other args)
+    uses the item
 !void (how much)
     gets rid of the points you specify
 !gift (user) (How much)
