@@ -455,11 +455,11 @@ async def use(ctx,*args):
             pass
     used_on = used_on_real()
     pokeballinst = pokeball(user=user,used_on=used_on)
-    guninst = gun(user=user,has_inlimited_uses=True,)
-    fanum_taxinst = fanum_tax(user=user,used_on=used_on,has_inlimited_uses=True,has_more_functions=True)
+    guninst = gun(user=user,has_inlimited_uses=True,rarity=1.1)
+    fanum_taxinst = fanum_tax(user=user,used_on=used_on,has_inlimited_uses=True,has_more_functions=True,rarity=1.1)
     uselessnessinst = item(user=user)
-    statistical_advantageinst = statistical_advantage(user=user,has_inlimited_uses=True)
-    emoji_guninst = emoji_gun(user=user,has_inlimited_uses=True)
+    statistical_advantageinst = statistical_advantage(user=user,has_inlimited_uses=True,rarity=1.1)
+    emoji_guninst = emoji_gun(user=user,has_inlimited_uses=True,rarity=-5)
     items = {
         "pokeball":pokeballinst,
         "gun":guninst,
