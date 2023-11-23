@@ -2,7 +2,8 @@
     "snakesnuggles": {
         "points": 2512708260902427605357190062026642127,
         "inventory": [
-            "Helm of Statistical Advantage"
+            "Helm of Statistical Advantage",
+            "Emoji gun"
         ],
         "win_streak_rps": 1,
         "helm_on": true
@@ -10,7 +11,8 @@
     "cheese2144": {
         "points": 30000000000000000000000000000000000010000000000000000000000000000000000079,
         "inventory": [
-            "fanum tax wand","kitchen knife"
+            "fanum tax wand",
+            "kitchen knife"
         ],
         "win_streak_rps": 1
     },
