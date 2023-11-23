@@ -299,13 +299,14 @@ class item:
                  user:str,
                  used_on:str = None,
                  has_inlimited_uses:bool = False,
-                 has_more_functions=False
+                 has_more_functions=False,
+                 rarity:float=0
                  ):
         self.user = user
         self.used_on = used_on
         self.has_inlimited_uses = has_inlimited_uses
         self.has_more_functions = has_more_functions
-
+        self.rarity = rarity
     async def item_function(self,ctx):
         await ctx.send("It did nothing")
 
@@ -454,7 +455,7 @@ async def use(ctx,*args):
             pass
     used_on = used_on_real()
     pokeballinst = pokeball(user=user,used_on=used_on)
-    guninst = gun(user=user,has_inlimited_uses=True)
+    guninst = gun(user=user,has_inlimited_uses=True,)
     fanum_taxinst = fanum_tax(user=user,used_on=used_on,has_inlimited_uses=True,has_more_functions=True)
     uselessnessinst = item(user=user)
     statistical_advantageinst = statistical_advantage(user=user,has_inlimited_uses=True)
