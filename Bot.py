@@ -153,7 +153,6 @@ async def coin(ctx,*args):
         json.dump(data, json_file,indent=4)
 
 @bot.command()
-@commands.cooldown(1, 60, commands.BucketType.user)
 async def rps(ctx):
     file_path = "points.json"
     data = open_file(file_path)
