@@ -710,6 +710,9 @@ async def rob(ctx, *args):
     file_path = "points.json"
     data = open_file(file_path)
 
+    if ctx.author.name.lower() in ['snakesnuggles',"elichat3025"]:
+        await ctx.send("Robbing is disabled for you")
+        return
     if 'points' not in data[ctx.author.name.lower()]:
         data[ctx.author.name.lower()]["points"] = 0
 
