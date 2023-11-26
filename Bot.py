@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 import random
 from datetime import datetime
 import json
@@ -25,19 +26,7 @@ def open_file(file_path:str):
     return data
 
 #checks if user is real
-def is_user_real(data,author_name,anything_else = None):
-    author_name_lower = author_name.lower()
 
-
-    if author_name_lower not in data:
-        data[author_name_lower] = {
-            "points": 0,
-            "win_streak_rps": 1,
-            "has_used_day_thing":[False,False,False],
-            "inventory": []
-        }
-    
-    return data
 
 async def send_to_bank(howmuch:int,ctx):
     bank = open_file("bank.json")
@@ -106,7 +95,12 @@ async def coin(ctx,*args):
     
     file_path = "points.json"
     data = open_file(file_path)
-    data = is_user_real(data,ctx.author.name)
+    
+    if "points" not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["points"] = 0
+    if "inventory" not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["inventory"] = []
+
     HorT = random.randint(0, 1)
     c = {0: "heads", 1: "tails"}
     points = data[ctx.author.name.lower()]["points"]
@@ -157,9 +151,12 @@ async def rps(ctx):
     file_path = "points.json"
     data = open_file(file_path)
 
-    message = await ctx.send("Rock, paper, or scissors? React with your choice!")
+    message = ctx.message
 
-    data = is_user_real(data,ctx.author.name)
+    if "points" not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["points"] = 0
+    if "inventory" not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["inventory"] = []
 
     # Define the reactions for rock, paper, and scissors
     reactions = ['🪨', '📄', '✂️']
@@ -193,7 +190,8 @@ async def rps(ctx):
         if player_choice == bot_choice:
             result = "It's a tie!"
             await ctx.send("I'll give you another chance")
-            await rps.callback(ctx)
+
+            await rps2(ctx)
             return
         elif bot_choice == game_rules[player_choice]['win']:
             try:
@@ -218,6 +216,74 @@ async def rps(ctx):
     except TimeoutError:
         await ctx.send("You didn't make a choice in time. Game over!")
 
+async def rps2(ctx):
+    file_path = "points.json"
+    data = open_file(file_path)
+
+    message = await ctx.send("React with your choice")
+
+    if "points" not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["points"] = 0
+    if "inventory" not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["inventory"] = []
+
+    # Define the reactions for rock, paper, and scissors
+    reactions = ['🪨', '📄', '✂️']
+
+    # Add reactions to the message
+    for reaction in reactions:
+        await message.add_reaction(reaction)
+
+    # Define a check function to filter reactions by user and emoji
+    def check(reaction, user):
+        return user == ctx.author and str(reaction.emoji) in reactions
+
+    try:
+        reaction, user = await bot.wait_for('reaction_add', check=check, timeout=30.0)
+
+        # Determine the user's choice based on the reaction emoji
+        emoji_to_event = {"🪨":'rock',"📄":'paper','✂️':'scissors'}
+        player_choice = emoji_to_event[str(reaction.emoji)]
+
+        # Generate the bot's choice
+        bot_choice = random.choice(['rock', 'paper', 'scissors'])
+
+        # Define the game rules using a dictionary
+        game_rules = {
+            'rock': {'win': 'scissors', 'lose': 'paper'},
+            'paper': {'win': 'rock', 'lose': 'scissors'},
+            'scissors': {'win': 'paper', 'lose': 'rock'}
+        }
+        getwinstreak = data[ctx.author.name.lower()]["win_streak_rps"]
+        # Determine the winner based on the game rules
+        if player_choice == bot_choice:
+            result = "It's a tie!"
+            await ctx.send("I'll give you another chance")
+            await rps2(ctx)
+            return
+        elif bot_choice == game_rules[player_choice]['win']:
+            try:
+                result = f"{ctx.author.mention} wins! {player_choice.capitalize()} beats {bot_choice}.\n {ctx.author.mention} won {20 * getwinstreak} points"
+                data[ctx.author.name.lower()]["win_streak_rps"] += 1
+                data[ctx.author.name.lower()]["points"] += 20 * int(getwinstreak)
+                
+                pokegetchance = getwinstreak/100
+                if random.random() >= pokegetchance and "pokeball belt" in data[ctx.author.name.lower()]["inventory"]:
+                    data[ctx.author.name.lower()]["inventory"].append("pokeball")
+                    await ctx.send("You got a pokeball")
+                await send_to_bank(-(20*int(getwinstreak)),ctx)
+            except bobwillendthis:
+                return
+        else:
+            result = f"{bot.user.mention} wins! {bot_choice.capitalize()} beats {player_choice}."
+            data[ctx.author.name.lower()]["win_streak_rps"] = 1
+        await ctx.send(f"{bot.user.mention} choice was: {bot_choice}\n {ctx.author.mention} choice was: {player_choice}\n {result}")
+
+        with open(file_path, "w") as json_file:
+            json.dump(data, json_file,indent=4)
+    except TimeoutError:
+        await ctx.send("You didn't make a choice in time. Game over!")  
+
 @bot.command()
 async def lir(ctx):
     ...
@@ -238,7 +304,9 @@ class responding_to_times:
                 file = open(file_path)
                 data = json.load(file)
                 user_id = user.name.lower()
-                data = is_user_real(data,user_id) 
+                if "points" not in data[user_id]:
+                    data[user_id]["points"] = 0
+
                 if user_id in data:
                     channel = bot.get_channel(channel_id)
                     if channel:
@@ -251,7 +319,6 @@ class responding_to_times:
         def setting_has_used_day(current,user):
             data = open_file(file_path)
             user_id = user.name.lower()
-            data = is_user_real(data,user_id)
             if "has_used_day_thing" not in data[user_id]:
                 data[user_id]["has_used_day_thing"] = [False,False,False]
 
@@ -261,7 +328,9 @@ class responding_to_times:
                 json.dump(data, json_file,indent=4)
         data = open_file(file_path)
         user_id = user.name.lower()
-        data = is_user_real(data,user_id) 
+        if "points" not in data[user_id]:
+            data[user_id]["points"] = 0
+
         current_datetime = datetime.now()
         current_time_int = current_datetime.hour * 100 + current_datetime.minute
         if current_time_int <= self.max and current_time_int >= self.min:
@@ -313,7 +382,10 @@ class pokeball(item):
     async def item_function(self, ctx):
         file_path = "points.json"
         data = open_file(file_path)
-        data = is_user_real(data,self.user)
+        
+        if "points" not in data[ctx.author.name.lower()]:
+            data[ctx.author.name.lower()]["points"] = 0
+
         if data[self.user]["points"] <= 0:
             points = data[self.user]["points"]
             await ctx.send(f"Yea right, nice try you got {points}")
