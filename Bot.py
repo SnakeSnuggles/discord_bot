@@ -1,10 +1,10 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import app_commands
 import random
 from datetime import datetime
 import json
-
+import asyncio
 
 intents = discord.Intents.default()
 intents.typing = False
@@ -416,6 +416,33 @@ class statistical_advantage(item):
         with open(file_path, "w") as json_file:
             json.dump(data, json_file,indent=4)
 
+class shot_gun(item):
+    async def item_function(self, ctx):
+        data = open_file("points.json")
+        if self.used_on not in data:
+            await ctx.send(f"{self.used_on} does not exist")
+            return
+        if "Shells"not in data[self.user]["inventory"]:
+            await ctx.send("You do not have Shells") 
+            return
+        if "quiet time" not in data[self.used_on]:
+            data[self.used_on]["quiet time"] = 0
+        if "on_quiet_time_in" not in data[self.used_on]:
+            data[self.used_on]["on_quiet_time_in"] = -1
+        data[self.used_on]["quiet time"] = 60
+        data[self.used_on]["on_quiet_time_in"] = ctx.guild.id
+        data[self.user]["inventory"].remove("Shells")
+        role = discord.utils.get(ctx.guild.roles, name="On time out")
+        member = discord.utils.get(ctx.guild.members, name=self.used_on)
+        if role == None:
+            role = await ctx.guild.create_role(name="On time out")
+            await role.edit(permissions=discord.Permissions(send_messages=False))
+            highest_role = ctx.guild.roles[-1]
+            await role.edit(position=highest_role.position + 1)
+
+        await member.add_roles(role)
+        with open("points.json", "w") as json_file:
+            json.dump(data, json_file,indent=4)
 class emoji_gun(item):
     async def item_function(self, ctx):
         emojis = ["😀","😃","😄","😁","😆","🥹","😅","😂","🤣","🥲","☺️","😊","😇","🙂","🙃","😉","😌","😍","🥰","😘","😗","😙","😚","😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🥸","🤩","🥳","😏","😒","😞","😔","😟","😕","☹️","🙁","😣","😖","🤬","😡","😠","😤","😤","😭","😢","🥺","😩","😫","🤯","😳","🥵","🥶","😶‍🌫️","😱","😨","😰","😥","🫠","🤫","🫡","🫢","🤭","🫣","🤔","🤗","😓","🤥","😶","🫥","😐","🫤","😑","😬","🙄","😯","😮‍💨","😪","🤤","😴","🥱","😲","😮","😦","😧","😵","😵‍💫","🤐","🥴","🤢","🤮","🤧","😷","🤒","💩","🤡","👺","👹","👿","😈","🤠","🤑","🤕","👻","👻","💀","☠️","👽","👾","🤖","🎃","😺","😸","🤲","🫶","😾","😿","🙀","😽","😼","😻","😹","👐","👐","🙌","👏","🤝","👍","👎","👊","✊","🤛","🤏","🤌","👌","🤘","🤟","🫰","✌️","🤞","🤜","🫳","🫴","👈","👉","👆","👇","☝️","✋","🤚","🖐️","🖖","👋","🤙","🫲","🫱","💪","🦾","🖕","👄","💋","💄","🦿","🦵","🦶","🫵","🙏","✍️","🫦","🦷","👅","👂","🦻","👃","👣","👁️","👀","🧒","👶","🫂","👥","👤","🗣️","🧠","🫁","🫀"]
@@ -425,6 +452,25 @@ class emoji_gun(item):
             await DM.send(emojis[choice])
             return
         await ctx.send(emojis[choice])
+
+@tasks.loop(seconds=1)
+async def timer_stuffs():
+    data = open_file("points.json")
+    for x in data:
+        if "quiet time" not in data[x] or "on_quiet_time_in" not in data[x]:
+            continue
+
+        if data[x]["quiet time"] > 0:
+            data[x]["quiet time"] -= 1
+            print("Removed 1")
+        else:
+            member = discord.utils.get(bot.get_all_members(), name=x)
+            await member.remove_roles("On time out")
+            data[x]["on_quiet_time_in"] = -1
+            print("Removed role")
+        with open("points.json", "w") as json_file:
+            json.dump(data, json_file,indent=4)
+
 @bot.command()
 async def pokemon(ctx,*args):
     args = " ".join(args)
@@ -475,13 +521,15 @@ async def use(ctx,*args):
     uselessnessinst = item(user=user)
     statistical_advantageinst = statistical_advantage(user=user,has_inlimited_uses=True,rarity=1.1)
     emoji_guninst = emoji_gun(user=user,has_inlimited_uses=True,rarity=-5)
+    shot_guninst = shot_gun(user=user,used_on=used_on,has_inlimited_uses=True,rarity=5)
     items = {
         "pokeball":pokeballinst,
         "gun":guninst,
         "fanum tax wand":fanum_taxinst,
         "Uselessness":uselessnessinst,
         "Helm of Statistical Advantage":statistical_advantageinst,
-        "Emoji gun":emoji_guninst
+        "Emoji gun":emoji_guninst,
+        "Shot gun":shot_guninst
     }
 
     if args[0] not in items:

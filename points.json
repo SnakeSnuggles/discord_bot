@@ -1,12 +1,26 @@
 {
     "snakesnuggles": {
-        "points": 2512708260902427605357190062026642127,
+        "points": 2512708260902427605357190062026632127,
         "inventory": [
             "Helm of Statistical Advantage",
-            "Emoji gun"
+            "Emoji gun",
+            "Shot gun",
+            "Shells",
+            "Shells",
+            "Shells",
+            "Shells",
+            "Shells",
+            "Shells",
+            "Shells",
+            "Shells",
+            "Shells",
+            "Shells",
+            "Shells"
         ],
         "win_streak_rps": 1,
-        "helm_on": true
+        "helm_on": true,
+        "quiet time": 60,
+        "on_quiet_time_in": 819002840411799595
     },
     "cheese2144": {
         "points": 30000000000000000000000000000000000010000000000000000000000000000000000079,
@@ -35,8 +49,10 @@
         "win_streak_rps": 1
     },
     "elichat3025": {
-        "points": 100000,
-        "inventory": [],
+        "points": 90000,
+        "inventory": [
+            "Shells"
+        ],
         "win_streak_rps": 1
     },
     "nightlight_official": {
