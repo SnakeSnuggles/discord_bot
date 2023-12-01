@@ -425,6 +425,15 @@ class emoji_gun(item):
             await DM.send(emojis[choice])
             return
         await ctx.send(emojis[choice])
+
+class insult_gun(item):
+    async def item_function(self, ctx):
+        used_on = discord.utils.get(ctx.guild.members, name=self.used_on)
+        insults = [f"{used_on.mention}, you gigglebox"]
+        choice = random.randint(0,len(insults)-1)
+        DM = await used_on.create_dm()
+
+        await DM.send(insults[choice])
 @bot.command()
 async def pokemon(ctx,*args):
     args = " ".join(args)
@@ -475,13 +484,15 @@ async def use(ctx,*args):
     uselessnessinst = item(user=user)
     statistical_advantageinst = statistical_advantage(user=user,has_inlimited_uses=True,rarity=1.1)
     emoji_guninst = emoji_gun(user=user,has_inlimited_uses=True,rarity=-5)
+    insult_guninst = insult_gun(user=user,used_on=used_on,has_inlimited_uses=True,rarity=15)
     items = {
         "pokeball":pokeballinst,
         "gun":guninst,
         "fanum tax wand":fanum_taxinst,
         "Uselessness":uselessnessinst,
         "Helm of Statistical Advantage":statistical_advantageinst,
-        "Emoji gun":emoji_guninst
+        "Emoji gun":emoji_guninst,
+        "Insult gun":insult_guninst
     }
 
     if args[0] not in items:
