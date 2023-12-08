@@ -5,7 +5,6 @@ import random
 from datetime import datetime
 import json
 
-
 intents = discord.Intents.default()
 intents.typing = False
 intents.presences = False
@@ -70,7 +69,13 @@ async def on_message_delete(message):
     if message.author != bot.user and chance == 1:
         deleted_content = message.content
         await message.channel.send(f'I saw that, you deleted "{deleted_content}" {message.author.mention}')
-
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        ...
+    else:
+        # Handle other errors if needed
+        print(f"An error occurred: {error}")
 @bot.event
 async def on_message(message):
 
