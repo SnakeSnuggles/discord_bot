@@ -526,11 +526,12 @@ async def mock(ctx, *args):
     args = args.split()
     fixed_string = []
     for x in args:
-        number = random.randint(0, 1)
-        if number == 1:
-            fixed_string.append(x.upper())
-        elif number == 0:
-            fixed_string.append(x.lower())
+        for i in x:
+            number = random.randint(0, 1)
+            if number == 1:
+                fixed_string.append(i.upper())
+            elif number == 0:
+                fixed_string.append(i.lower())
     await ctx.send(" ".join(fixed_string))
 
 @bot.command()
