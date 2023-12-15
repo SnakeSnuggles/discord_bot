@@ -532,7 +532,7 @@ async def mock(ctx, *args):
                 fixed_string.append(i.upper())
             elif number == 0:
                 fixed_string.append(i.lower())
-    await ctx.send(" ".join(fixed_string))
+    await ctx.send("".join(fixed_string))
 
 @bot.command()
 async def shop(ctx, *args):
