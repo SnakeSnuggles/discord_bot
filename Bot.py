@@ -521,6 +521,19 @@ async def use(ctx,*args):
         await items[args[0]].item_function(ctx=ctx)
 
 @bot.command()
+async def mock(ctx, *args):
+    args = " ".join(args)
+    args = args.split()
+    fixed_string = []
+    for x in args:
+        number = random.randint(0, 1)
+        if number == 1:
+            fixed_string.append(x.upper())
+        elif number == 0:
+            fixed_string.append(x.lower())
+    await ctx.send(" ".join(fixed_string))
+
+@bot.command()
 async def shop(ctx, *args):
     file_path = "points.json"
     file = open(file_path)
