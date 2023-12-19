@@ -166,11 +166,15 @@ async def rps(ctx,d = None):
     else:
         message = await ctx.send("React with your choice")
     
-    
+    if ctx.author.name.lower() not in data:
+        data[ctx.author.name.lower()] = {}
+
     if "points" not in data[ctx.author.name.lower()]:
         data[ctx.author.name.lower()]["points"] = 0
     if "inventory" not in data[ctx.author.name.lower()]:
         data[ctx.author.name.lower()]["inventory"] = []
+    if "win_streak_rps" not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["win_streak_rps"] = 0
 
     # Define the reactions for rock, paper, and scissors
     reactions = ['🪨', '📄', '✂️']
