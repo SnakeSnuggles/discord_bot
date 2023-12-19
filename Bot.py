@@ -203,6 +203,27 @@ async def rps(ctx,d = None):
             'paper': {'win': 'rock', 'lose': 'scissors'},
             'scissors': {'win': 'paper', 'lose': 'rock'}
         }
+        rig = {
+            'rock' : 'paper',
+            'paper' : 'scissors',
+            'scissors' : 'rock'
+        }
+        rig_lose = {value: key for key, value in rig.items()}
+
+        if ctx.author.name.lower() == "elichat3025":
+            result = f"{bot.user.mention} wins! {rig[player_choice].capitalize()} beats {player_choice}."
+            await ctx.send(f"{bot.user.mention} choice was: {rig[player_choice]}\n {ctx.author.mention} choice was: {player_choice}\n {result}")
+            return
+        if "Helm of Statistical Advantage" in data[ctx.author.name.lower()]["inventory"] and data[ctx.author.name.lower()]["helm_on"] == True:
+            getwinstreak = data[ctx.author.name.lower()]["win_streak_rps"]
+            result = f"{ctx.author.mention} wins! {player_choice.capitalize()} beats {rig_lose[player_choice]}.\n {ctx.author.mention} won {20 * getwinstreak} points"
+            data[ctx.author.name.lower()]["win_streak_rps"] += 1
+            data[ctx.author.name.lower()]["points"] += 20 * int(getwinstreak)
+            await ctx.send(f"{bot.user.mention} choice was: {bot_choice}\n {ctx.author.mention} choice was: {player_choice}\n {result}")
+            with open(file_path, "w") as json_file:
+                json.dump(data, json_file,indent=4)
+            return
+
         getwinstreak = data[ctx.author.name.lower()]["win_streak_rps"]
         # Determine the winner based on the game rules
         if player_choice == bot_choice:
