@@ -257,7 +257,62 @@ async def rps(ctx,d = None):
 
 @bot.command()
 async def lir(ctx):
-    ...
+    file_path = "points.json"
+    data = open_file(file_path)
+    if "lir_data" not in data[ctx.author.name.lower()] or data[ctx.author.name.lower()]["lir_data"] < 2:
+        if data[ctx.author.name.lower()]["points"] > 2:
+            data[ctx.author.name.lower()]["lir_data"] = 2
+            data[ctx.author.name.lower()]["points"] -= 2
+            await send_to_bank(2,ctx)
+        else:
+            await ctx.send("Bro, how are you this poor? Can't even spare 2 points?")
+            return
+    lir_data = data[ctx.author.name.lower()]["lir_data"]
+
+    current_number = random.randint(1,10)
+    future_number = random.randint(1,10)
+    while True:
+        if future_number == current_number:
+            future_number = random.randint(1,10)
+            continue
+        break
+    
+    message = await ctx.send(f"Prize: {lir_data} \nNumber 1-10: {current_number}")
+    reactions_to_add = ["⬆️","⬇️","💰"]
+    for x in reactions_to_add:
+        if x == "💰" and lir_data == 2:
+            continue
+        await message.add_reaction(x)
+    try:
+        def check(reaction, user):
+            return user == ctx.author and str(reaction.emoji) in reactions_to_add
+        reaction, user = await bot.wait_for('reaction_add', check=check, timeout=30.0)
+        emoji_to_event = {"⬆️":'up',"⬇️":'down','💰':'cash'}
+        player_choice = emoji_to_event[str(reaction.emoji)]
+
+        game_rules = {
+            "up": lambda future_number, current_number: future_number > current_number,
+            "down": lambda future_number, current_number: future_number < current_number
+        }
+        lir_data = data[ctx.author.name.lower()]["lir_data"]
+        if player_choice in game_rules and game_rules[player_choice](future_number, current_number):
+            data[ctx.author.name.lower()]["lir_data"] *= 2
+            lir_data = data[ctx.author.name.lower()]["lir_data"]
+            await ctx.send(f"You won, the pot is now {lir_data}")
+        elif player_choice == "cash":
+            await send_to_bank(-data[ctx.author.name.lower()]["lir_data"],ctx)
+            data[ctx.author.name.lower()]["points"] += data[ctx.author.name.lower()]["lir_data"]
+            await ctx.send(f"You cashed out for {lir_data}")
+            data[ctx.author.name.lower()]["lir_data"] = 0 
+        else:
+            await ctx.send(f"You lost")
+            data[ctx.author.name.lower()]["lir_data"] = 0
+
+        with open(file_path, "w") as json_file:
+            json.dump(data, json_file,indent=4)
+
+    except TimeoutError:
+        await ctx.send("You didn't make a choice in time. Game over!")  
 #end
 
 #Earning points
@@ -849,6 +904,7 @@ I will not tell you what these do:
 !use (item) (args)
 !void (how much)
 !gift (user) (How much)
+!lir
 !shop (what you want to but, write nothing if you want to see the list)
 !goodnight (7pm-11pm)
 !goodmorning (1am-10am)
@@ -894,6 +950,8 @@ Docs
     buy stuff
 !goodnight (7pm-11pm)
     say that to the bot
+!lir
+    plays the let it ride game
 !goodmorning (1am-10am)
     say that to the bot
 !goodnoon (12pm-1pm)
