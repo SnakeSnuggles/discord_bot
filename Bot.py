@@ -990,3 +990,10 @@ async def addadd(ctx,*args):
 #end
 
 bot.run(bot_Token)
+
+
+
+
+
+
+
