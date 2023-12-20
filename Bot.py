@@ -299,6 +299,10 @@ async def lir(ctx):
             data[ctx.author.name.lower()]["lir_data"] *= 2
             lir_data = data[ctx.author.name.lower()]["lir_data"]
             await ctx.send(f"You won, the pot is now {lir_data}")
+        elif "Helm of Statistical Advantage" in data[ctx.author.name.lower()]["inventory"] and data[ctx.author.name.lower()]["helm_on"] == True:
+            data[ctx.author.name.lower()]["lir_data"] *= 2
+            lir_data = data[ctx.author.name.lower()]["lir_data"]
+            await ctx.send(f"You won, the pot is now {lir_data}")
         elif player_choice == "cash":
             await send_to_bank(-data[ctx.author.name.lower()]["lir_data"],ctx)
             data[ctx.author.name.lower()]["points"] += data[ctx.author.name.lower()]["lir_data"]
