@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import app_commands
 import random
 from datetime import datetime
@@ -43,6 +43,7 @@ class bobwillendthis(Exception):
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}')
+    lower_tax_cooldown.start()
 
 @bot.event
 async def on_reaction_add(reaction, user):
@@ -552,6 +553,61 @@ async def inventory(ctx):
     inv = data[ctx.author.name.lower()]["inventory"]
     inv = "\n".join(inv)
     await ctx.send("Inventory:\n```" + inv + "```")
+
+@bot.command()
+async def tax(ctx):
+    points = "points.json"
+    data = open_file(points)
+    
+    bank_path = "bank.json"
+    bank_data = open_file(bank_path)
+
+    if "titles" not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["titles"] = []
+    if "tax_cooldown" not in bank_data:
+        bank_data["tax_cooldown"] = 0
+
+    if "president" not in data[ctx.author.name.lower()]["titles"]:
+        await ctx.send("You are not the president")
+        return
+    if bank_data["tax_cooldown"] > 0:
+        await ctx.send(f"Tax is on cooldown for the next {bank_data['tax_cooldown']} seconds")
+        return
+
+    total_tax = 0
+    for user in data:
+        if user == ctx.author.name.lower():
+            continue
+        try:
+            data[user]["points"] -= round(data[user]["points"] * 0.05)
+            data[ctx.author.name.lower()]["points"] += round(data[user]["points"] * 0.05)
+            total_tax += round(data[user]["points"] * 0.05)
+        except OverflowError:
+            data[user]["points"] -= 99999999999999999999999999999999999999
+            data[ctx.author.name.lower()]["points"] += 99999999999999999999999999999999999999
+            total_tax += 99999999999999999999999999999999999999
+    
+    await ctx.send(f"The president collected {total_tax} points worth of tax")
+    bank_data["tax_cooldown"] = 1200
+
+    with open(bank_path, "w") as json_file:
+        json.dump(bank_data, json_file,indent=4)
+    with open(points, "w") as json_file:
+        json.dump(data, json_file,indent=4)
+
+@tasks.loop(seconds=1)
+async def lower_tax_cooldown():
+    bank_path = "bank.json"
+    bank_data = open_file(bank_path)
+    if "tax_cooldown" not in bank_data:
+        bank_data["tax_cooldown"] = 0
+    
+    if bank_data["tax_cooldown"] > 0:
+        bank_data["tax_cooldown"] -= 1
+
+    with open(bank_path, "w") as json_file:
+        json.dump(bank_data, json_file,indent=4)
+
 
 @bot.command()
 async def use(ctx,*args):
