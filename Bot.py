@@ -114,7 +114,7 @@ async def coin(ctx,*args):
         return
 
     if args[1] == "all":
-        args = list(args[1])
+        args = list(args)
         args[1] = data[ctx.author.name.lower()]["points"]
 
     if data[ctx.author.name.lower()]["points"] < int(args[1]):
