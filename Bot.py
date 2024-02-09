@@ -24,9 +24,16 @@ def open_file(file_path:str):
         data = json.load(file)
     return data
 
-#checks if user is real
+# TODO: Make it so all the files if the files don't exist are made and stuff
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user.name}')
+    lower_tax_cooldown.start()
+    time_till_next_election.start()
+    election.start()
 
-
+guild_channels = open_file("election_sign_up.json")
+guild_channels = {int(key): value for key, value in guild_channels.items()}
 async def send_to_bank(howmuch:int,ctx):
     bank = open_file("bank.json")
     if (bank["points"]+howmuch) < 0:
@@ -40,10 +47,7 @@ async def send_to_bank(howmuch:int,ctx):
 class bobwillendthis(Exception):
     pass
 
-@bot.event
-async def on_ready():
-    print(f'Logged in as {bot.user.name}')
-    lower_tax_cooldown.start()
+
 
 @bot.event
 async def on_reaction_add(reaction, user):
@@ -608,6 +612,156 @@ async def lower_tax_cooldown():
     with open(bank_path, "w") as json_file:
         json.dump(bank_data, json_file,indent=4)
 
+@tasks.loop(seconds=1)
+async def time_till_next_election():
+    # An election will happen once a week
+    time_event = "time_events.json"
+    time_data = open_file(time_event)
+    if "election_cooldown" not in time_data:
+        time_data["election_cooldown"] = 0
+    
+    if time_data["election_cooldown"] > 0:
+        time_data["election_cooldown"] -= 1
+    else:
+
+        if "set" not in time_data: time_data["set"] = False
+
+        if time_data["set"] == False:
+            time_data["time_to_choose_a_canadate"] = 1200
+            time_data["set"] = True
+            for guild in bot.guilds:
+                if guild.id not in guild_channels:
+                    continue
+                channel = guild.get_channel(guild_channels[guild.id])
+                if channel:
+                    await channel.send(f'The election has now started')
+    with open(time_event, "w") as json_file:
+        json.dump(time_data, json_file,indent=4)
+
+
+def tally_votes_and_give_president_title():
+    users = open_file("points.json")
+
+    most_votes = 0
+    person_with_most_votes = None
+
+    for user_id, data in users.items():
+        if "titles" not in data:
+            data["titles"] = []
+        if "votes" not in data:
+            data["votes"] = 0
+
+        if data["votes"] > most_votes:
+            most_votes = data["votes"]
+            person_with_most_votes = user_id
+
+    if person_with_most_votes is not None:
+        users[person_with_most_votes]["titles"].append("president")
+
+        with open("points.json", "w") as json_file:
+            json.dump(users, json_file, indent=4)
+
+    return person_with_most_votes
+
+@tasks.loop(seconds=1)
+async def election():
+    # An election will happen once a week
+    time_event = "time_events.json"
+    time_data = open_file(time_event)
+
+    user_data = open_file("points.json")
+
+    if "election_cooldown" not in time_data:
+        time_data["election_cooldown"] = 0
+    
+    if  time_data["election_cooldown"] < 1:
+        # Send "the voting has begun"
+        if "time_to_choose_a_canadate" not in time_data:
+            time_data["time_to_choose_a_canadate"] = 0
+
+        if time_data["time_to_choose_a_canadate"] > 0:
+            time_data["time_to_choose_a_canadate"] -= 1
+        else:
+            #Send "Election is finnished"
+            
+            for user in user_data:
+                if "titles" not in user: user_data[user]["titles"] = []
+                if "president" not in user_data[user]["titles"]:
+                    continue
+                user_data[user]["titles"].remove("president")
+            winner = tally_votes_and_give_president_title()
+            user_data = open_file("points.json")
+            for guild in bot.guilds:
+                # Check if the guild has a stored channel ID
+                if guild.id in guild_channels:
+                    # Get the desired channel using the stored channel ID
+                    channel = guild.get_channel(guild_channels[guild.id])
+
+                    # Check if the channel exists before sending a message
+                    if channel:
+                        await channel.send(f'The election is done, please welcome our new president {winner}')
+            if "set" not in time_data: time_data["set"] = False
+
+            if time_data["set"] == True:
+                time_data["election_cooldown"] = 432000
+                time_data["set"] = False
+                for user in user_data:
+                    user_data[user]["has_voted"] = True
+                    user_data[user]["voted_for"] = None
+                    user_data[user]["votes"] = 0
+
+
+
+    with open(time_event, "w") as json_file:
+        json.dump(time_data, json_file,indent=4)
+    with open("points.json", "w") as json_file:
+        json.dump(user_data, json_file,indent=4)
+@bot.command()
+async def vote(ctx,person_to_vote_for):
+    file_path = "points.json"
+    data = open_file(file_path)
+    time_events = open_file("time_events.json")
+
+    if "election_cooldown" not in time_events:
+        time_events["election_cooldown"] = 0 
+
+    if "has_voted" not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["has_voted"] = False
+    if "voted_for" not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["voted_for"] = None
+    if "votes" not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["votes"] = 0
+    if data[ctx.author.name.lower()]["has_voted"] == True:
+        await ctx.send("You have already voted")
+        return
+    
+    if time_events["election_cooldown"] > 0:
+        await ctx.send("An election is not happening right now")
+        return
+
+    if person_to_vote_for not in data:
+        await ctx.send("That person does not exist")
+        return
+    if "votes" not in data[person_to_vote_for]:
+        data[person_to_vote_for]["votes"] = 0
+
+    data[person_to_vote_for]["votes"] += 1
+    data[ctx.author.name.lower()]["has_voted"] = True
+    data[ctx.author.name.lower()]["voted_for"] = person_to_vote_for 
+
+    await ctx.send(f"You succesfully voted for {person_to_vote_for} they now have {data[person_to_vote_for]["votes"]}, here's a sticker :exploding_head:")
+
+    with open(file_path, "w") as json_file:
+        json.dump(data, json_file,indent=4)
+
+@bot.command()
+async def sign_up(ctx):
+    data = open_file("election_sign_up.json")
+
+    data[ctx.guild.id] = ctx.channel.id
+
+    with open("election_sign_up.json", "w") as json_file:
+        json.dump(data, json_file,indent=4)
 
 @bot.command()
 async def use(ctx,*args):
