@@ -581,6 +581,7 @@ async def tax(ctx,tax_amount):
         await ctx.send(f"Tax is on cooldown for the next {bank_data['tax_cooldown']} seconds")
         return
 
+    tax_amount = float(tax_amount)
     if tax_amount > 30:
         await ctx.send("That is too much tax")
         return
