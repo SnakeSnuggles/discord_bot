@@ -639,7 +639,7 @@ def time_calculation():
 
     current_datetime = datetime(*current_time[:6])
 
-    modified_datetime = current_datetime + timedelta(days=5)
+    modified_datetime = current_datetime + timedelta(days=7)
 
     modified_time = modified_datetime.timetuple()
 
@@ -647,7 +647,7 @@ def time_calculation():
 
     time_events["next election"] = modified_time
     
-    choose_time = current_datetime + timedelta(days=6)
+    choose_time = current_datetime + timedelta(days=8)
 
     choose_time = choose_time.timetuple()
 
