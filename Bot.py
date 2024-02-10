@@ -705,11 +705,11 @@ async def send_election_start_and_end(start_or_end:str):
             if channel:
                 await channel.send('The election has now started')
     elif start_or_end == "end":
+        winner = tally_and_give_president()
         for guild in bot.guilds:
             if guild.id not in signed_up_channeles:
                 continue
             channel = guild.get_channel(signed_up_channeles[guild.id])
-            winner = tally_and_give_president()
             if channel:
                 await channel.send(f'The election has now ended welcome our new presedent {winner}')
                 time_data["elec started"] = False
