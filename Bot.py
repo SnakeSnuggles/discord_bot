@@ -29,7 +29,7 @@ def open_file(file_path:str):
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}')
-    lower_tax_cooldown.start()
+    lower__cooldown.start()
     check_if_election.start()
 
 def guilds_sign_up():
@@ -473,7 +473,7 @@ class gun(item):
         with open(file_path, "w") as json_file:
             json.dump(data, json_file,indent=4)
 
-class fanum_tax(item):
+class fanum_(item):
     async def item_function(self, ctx,function:str):
         file_path = "points.json"
         data = open_file(file_path)
@@ -569,7 +569,6 @@ async def tax(ctx,tax_amount):
     bank_path = "bank.json"
     bank_data = open_file(bank_path)
 
-    tax_amount = float(tax_amount) * 100
     if "titles" not in data[ctx.author.name.lower()]:
         data[ctx.author.name.lower()]["titles"] = []
     if "tax_cooldown" not in bank_data:
