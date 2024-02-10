@@ -2,8 +2,9 @@ import discord
 from discord.ext import commands, tasks
 from discord import app_commands
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
+import time
 
 intents = discord.Intents.default()
 intents.typing = False
@@ -29,11 +30,13 @@ def open_file(file_path:str):
 async def on_ready():
     print(f'Logged in as {bot.user.name}')
     lower_tax_cooldown.start()
-    time_till_next_election.start()
-    election.start()
+    check_if_election.start()
 
-guild_channels = open_file("election_sign_up.json")
-guild_channels = {int(key): value for key, value in guild_channels.items()}
+def guilds_sign_up():
+    guild_channels = open_file("election_sign_up.json")
+    guild_channels = {int(key): value for key, value in guild_channels.items()}
+    return guild_channels
+
 async def send_to_bank(howmuch:int,ctx):
     bank = open_file("bank.json")
     if (bank["points"]+howmuch) < 0:
@@ -559,13 +562,14 @@ async def inventory(ctx):
     await ctx.send("Inventory:\n```" + inv + "```")
 
 @bot.command()
-async def tax(ctx):
+async def tax(ctx,tax_amount):
     points = "points.json"
     data = open_file(points)
     
     bank_path = "bank.json"
     bank_data = open_file(bank_path)
 
+    tax_amount = float(tax_amount) * 100
     if "titles" not in data[ctx.author.name.lower()]:
         data[ctx.author.name.lower()]["titles"] = []
     if "tax_cooldown" not in bank_data:
@@ -578,13 +582,19 @@ async def tax(ctx):
         await ctx.send(f"Tax is on cooldown for the next {bank_data['tax_cooldown']} seconds")
         return
 
+    if tax_amount > 30:
+        await ctx.send("That is too much tax")
+        return
+    if tax_amount < 0:
+        await ctx.send("You're too generous but as your advisor I can't let you do that")
+        return
     total_tax = 0
     for user in data:
         if user == ctx.author.name.lower():
             continue
         try:
-            data[user]["points"] -= round(data[user]["points"] * 0.05)
-            data[ctx.author.name.lower()]["points"] += round(data[user]["points"] * 0.05)
+            data[user]["points"] -= round(data[user]["points"] * (tax_amount/100))
+            data[ctx.author.name.lower()]["points"] += round(data[user]["points"] * (tax_amount/100))
             total_tax += round(data[user]["points"] * 0.05)
         except OverflowError:
             data[user]["points"] -= 99999999999999999999999999999999999999
@@ -612,40 +622,47 @@ async def lower_tax_cooldown():
     with open(bank_path, "w") as json_file:
         json.dump(bank_data, json_file,indent=4)
 
-@tasks.loop(seconds=1)
-async def time_till_next_election():
-    # An election will happen once a week
-    time_event = "time_events.json"
-    time_data = open_file(time_event)
-    if "election_cooldown" not in time_data:
-        time_data["election_cooldown"] = 0
+
+def time_calculation():
+    '''
+    "Time to next election" : 1 week from now at 0:00
+    "Time to choose canadate" : from 00:00 - 23:59
+    ''' 
+    time_events = open_file("time_events.json")
+
+    if "next election" not in time_events:
+        time_events["next election"] = 'SHOULD BE BE CHANGED'
+    if "choose canadate" not in time_events:
+        time_events["choose canadate"] = 'SHOULD BE BE CHANGED'
+
+    current_time = time.localtime()
+
+    current_datetime = datetime(*current_time[:6])
+
+    modified_datetime = current_datetime + timedelta(days=5)
+
+    modified_time = modified_datetime.timetuple()
+
+    modified_time = modified_time[0:3]
+
+    time_events["next election"] = modified_time
     
-    if time_data["election_cooldown"] > 0:
-        time_data["election_cooldown"] -= 1
-    else:
+    choose_time = current_datetime + timedelta(days=6)
 
-        if "set" not in time_data: time_data["set"] = False
+    choose_time = choose_time.timetuple()
 
-        if time_data["set"] == False:
-            time_data["time_to_choose_a_canadate"] = 1200
-            time_data["set"] = True
-            for guild in bot.guilds:
-                if guild.id not in guild_channels:
-                    continue
-                channel = guild.get_channel(guild_channels[guild.id])
-                if channel:
-                    await channel.send(f'The election has now started')
-    with open(time_event, "w") as json_file:
-        json.dump(time_data, json_file,indent=4)
+    choose_time = choose_time[0:3]
+    time_events["choose canadate"] = choose_time
+    
+    with open("time_events.json","w") as json_file:
+        json.dump(time_events, json_file,indent=4)
 
-
-def tally_votes_and_give_president_title():
-    users = open_file("points.json")
-
+def tally_and_give_president():
+    user_data = open_file("points.json")
     most_votes = 0
     person_with_most_votes = None
 
-    for user_id, data in users.items():
+    for user_id, data in user_data.items():
         if "titles" not in data:
             data["titles"] = []
         if "votes" not in data:
@@ -654,76 +671,77 @@ def tally_votes_and_give_president_title():
         if data["votes"] > most_votes:
             most_votes = data["votes"]
             person_with_most_votes = user_id
-
-    if person_with_most_votes is not None:
-        users[person_with_most_votes]["titles"].append("president")
-
-        with open("points.json", "w") as json_file:
-            json.dump(users, json_file, indent=4)
-
+    for user in user_data:
+        if "president" in user_data[user]["titles"]:
+            user_data[user]["titles"].remove("president")
+    if person_with_most_votes == None:
+        return "no one all of you either did not vote or all of you voted for yourself's which is very selfish"
+    if "titles" not in user_data[person_with_most_votes]:
+        user_data[person_with_most_votes]["titles"] = []
+    user_data[person_with_most_votes]["titles"].append("president")
+    with open("points.json","w") as json_file:
+        json.dump(user_data, json_file,indent=4)
     return person_with_most_votes
 
-@tasks.loop(seconds=1)
-async def election():
-    # An election will happen once a week
-    time_event = "time_events.json"
-    time_data = open_file(time_event)
-
+def reset_votes():
     user_data = open_file("points.json")
 
-    if "election_cooldown" not in time_data:
-        time_data["election_cooldown"] = 0
-    
-    if  time_data["election_cooldown"] < 1:
-        # Send "the voting has begun"
-        if "time_to_choose_a_canadate" not in time_data:
-            time_data["time_to_choose_a_canadate"] = 0
-
-        if time_data["time_to_choose_a_canadate"] > 0:
-            time_data["time_to_choose_a_canadate"] -= 1
-        else:
-            #Send "Election is finnished"
-            
-            for user in user_data:
-                if "titles" not in user: user_data[user]["titles"] = []
-                if "president" not in user_data[user]["titles"]:
-                    continue
-                user_data[user]["titles"].remove("president")
-            winner = tally_votes_and_give_president_title()
-            user_data = open_file("points.json")
-            for guild in bot.guilds:
-                # Check if the guild has a stored channel ID
-                if guild.id in guild_channels:
-                    # Get the desired channel using the stored channel ID
-                    channel = guild.get_channel(guild_channels[guild.id])
-
-                    # Check if the channel exists before sending a message
-                    if channel:
-                        await channel.send(f'The election is done, please welcome our new president {winner}')
-            if "set" not in time_data: time_data["set"] = False
-
-            if time_data["set"] == True:
-                time_data["election_cooldown"] = 432000
-                time_data["set"] = False
-                for user in user_data:
-                    user_data[user]["has_voted"] = True
-                    user_data[user]["voted_for"] = None
-                    user_data[user]["votes"] = 0
-
-
-
-    with open(time_event, "w") as json_file:
-        json.dump(time_data, json_file,indent=4)
-    with open("points.json", "w") as json_file:
+    for user in user_data:
+        user_data[user]["has_voted"] = False
+        user_data[user]["voted_for"] = None
+        user_data[user]["votes"] = 0
+    with open("points.json","w") as json_file:
         json.dump(user_data, json_file,indent=4)
+
+async def send_election_start_and_end(start_or_end:str):
+    signed_up_channeles = guilds_sign_up()
+    time_data = open_file("time_events.json")
+
+    if start_or_end == "start" and time_data["elec started"] == False:
+        for guild in bot.guilds:
+            if guild.id not in signed_up_channeles:
+                continue
+            channel = guild.get_channel(signed_up_channeles[guild.id])
+            if channel:
+                await channel.send('The election has now started')
+    elif start_or_end == "end":
+        for guild in bot.guilds:
+            if guild.id not in signed_up_channeles:
+                continue
+            channel = guild.get_channel(signed_up_channeles[guild.id])
+            winner = tally_and_give_president()
+            if channel:
+                await channel.send(f'The election has now ended welcome our new presedent {winner}')
+                time_data["elec started"] = False
+                with open("time_events.json","w") as json_file:
+                    json.dump(time_data, json_file,indent=4)
+                time_calculation()
+                reset_votes()
+
+@tasks.loop(seconds=1,)
+async def check_if_election():
+    time_events = open_file("time_events.json")
+    current_time = time.localtime()
+    if "elec started" not in time_events:
+        time_events["elec started"] = False
+        with open("time_events.json","w") as json_file:
+            json.dump(time_events, json_file,indent=4)
+    if current_time.tm_mon == time_events["next election"][1] and current_time.tm_mday == time_events["next election"][2]:
+        #send "election start" for signed up channels
+        await send_election_start_and_end("start")
+        time_events["elec started"] = True
+        with open("time_events.json","w") as json_file:
+            json.dump(time_events, json_file,indent=4)
+
+    if current_time.tm_mon == time_events["choose canadate"][1] and current_time.tm_mday == time_events["choose canadate"][2]:
+        #send "election stop" for signed up channels
+        await send_election_start_and_end("end")
+
 @bot.command()
 async def vote(ctx,person_to_vote_for):
     file_path = "points.json"
     data = open_file(file_path)
     time_events = open_file("time_events.json")
-
-    if "election_cooldown" not in time_events:
-        time_events["election_cooldown"] = 0 
 
     if "has_voted" not in data[ctx.author.name.lower()]:
         data[ctx.author.name.lower()]["has_voted"] = False
@@ -734,10 +752,11 @@ async def vote(ctx,person_to_vote_for):
     if data[ctx.author.name.lower()]["has_voted"] == True:
         await ctx.send("You have already voted")
         return
-    
-    if time_events["election_cooldown"] > 0:
-        await ctx.send("An election is not happening right now")
+
+    if time_events["elec started"] == False:
+        await ctx.send("You can't vote outside an election")
         return
+
 
     if person_to_vote_for not in data:
         await ctx.send("That person does not exist")
@@ -759,7 +778,7 @@ async def sign_up(ctx):
     data = open_file("election_sign_up.json")
 
     data[ctx.guild.id] = ctx.channel.id
-
+    await ctx.send("You are signed up for the next election and for the next and for the next ect.")
     with open("election_sign_up.json", "w") as json_file:
         json.dump(data, json_file,indent=4)
 
