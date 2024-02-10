@@ -597,9 +597,10 @@ async def tax(ctx,tax_amount):
             data[ctx.author.name.lower()]["points"] += round(data[user]["points"] * (tax_amount/100))
             total_tax += round(data[user]["points"] * 0.05)
         except OverflowError:
-            data[user]["points"] -= 99999999999999999999999999999999999999
-            data[ctx.author.name.lower()]["points"] += 99999999999999999999999999999999999999
-            total_tax += 99999999999999999999999999999999999999
+            error_tax = 99999999999999999999999999999999999999
+            data[user]["points"] -= error_tax
+            data[ctx.author.name.lower()]["points"] += error_tax
+            total_tax += error_tax
     
     await ctx.send(f"The president collected {total_tax} points worth of tax")
     bank_data["tax_cooldown"] = 1200

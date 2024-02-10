@@ -20,11 +20,8 @@ with open(bot_token_file, 'r') as file:
         # Read the first line
         bot_Token = file.readline()
 
-current_time = time.localtime()
-formatted_time = time.strftime("%Y-%m-%d %H:%M:%S", current_time)
-print(formatted_time)
-current_time = time.localtime().tm_mday + 5
-formatted_time = time.strftime("%Y-%m-%d %H:%M:%S", current_time)
-print(formatted_time)
+@bot.command()
+async def test(ctx):
+        print(ctx)
 
 bot.run(bot_Token)
