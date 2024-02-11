@@ -1004,9 +1004,18 @@ async def leaderboard(ctx):
 async def bank(ctx):
     file_path = "bank.json"
     data = open_file(file_path)
-    points = "points"
-    await ctx.send(f"Bank's points:\n```{data[points]}```")
+    user_data = open_file(PATH_POINTS)
 
+    president = None
+    for user in user_data:
+        if "titles" not in user_data[user]:
+            user_data[user]["titles"] = []
+        if "president" in user_data[user]["titles"]:
+            president = user
+    if president == None:
+        await ctx.send(f"Bank's points:\n```{data['points']}```")
+    else:
+        await ctx.send(f"{president}'s points:\n```{user_data[president]['points']}```")
 @bot.command()
 async def choose(ctx, *args):
     choice = []
