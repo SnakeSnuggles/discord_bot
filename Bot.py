@@ -13,6 +13,12 @@ intents.message_content = True
 intents.guilds = True
 intents.members = True
 
+PATH_POINTS = "points.json"
+PATH_BANK = "bank.json"
+PATH_SIGNED_UP = "election_sign_up.json"
+PATH_TIME_EVENTS = "time_events.json"
+PATH_SHOP = "shop.json"
+
 # Create a bot instance with a prefix and the intents
 bot = commands.Bot(command_prefix='!', intents=intents)
 bot_token_file = "C:\\Users\\daves\\bot_token.txt"
@@ -108,7 +114,8 @@ async def coin(ctx,*args):
     
     file_path = "points.json"
     data = open_file(file_path)
-    
+    if ctx.author.name.lower not in data:
+        data[ctx.author.name.lower] = {}
     if "points" not in data[ctx.author.name.lower()]:
         data[ctx.author.name.lower()]["points"] = 0
     if "inventory" not in data[ctx.author.name.lower()]:
@@ -168,7 +175,8 @@ async def coin(ctx,*args):
 async def rps(ctx,d = None):
     file_path = "points.json"
     data = open_file(file_path)
-
+    if ctx.author.name.lower not in data:
+        data[ctx.author.name.lower] = {}
     if d != "Fgchatrtheerfg":
         message = ctx.message
     else:
@@ -267,6 +275,9 @@ async def rps(ctx,d = None):
 async def lir(ctx):
     file_path = "points.json"
     data = open_file(file_path)
+    if ctx.author.name.lower not in data:
+        data[ctx.author.name.lower] = {}
+
     if "lir_data" not in data[ctx.author.name.lower()] or data[ctx.author.name.lower()]["lir_data"] < 2:
         if data[ctx.author.name.lower()]["points"] > 2:
             data[ctx.author.name.lower()]["lir_data"] = 2
