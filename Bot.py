@@ -764,11 +764,15 @@ async def check_if_election():
         await send_election_start_and_end("end")
 
 @bot.command()
-async def vote(ctx,person_to_vote_for):
+async def vote(ctx,person_to_vote_for = None):
     file_path = "points.json"
     data = open_file(file_path)
     time_events = open_file("time_events.json")
 
+    next_elect = time_events["next election"]
+    if time_events["elec started"] == False:
+        await ctx.send(f"The next election is on {next_elect[0]}/{next_elect[1]}/{next_elect[2]}")
+        return
     if "has_voted" not in data[ctx.author.name.lower()]:
         data[ctx.author.name.lower()]["has_voted"] = False
     if "voted_for" not in data[ctx.author.name.lower()]:
@@ -778,12 +782,7 @@ async def vote(ctx,person_to_vote_for):
     if data[ctx.author.name.lower()]["has_voted"] == True:
         await ctx.send("You have already voted")
         return
-
-    if time_events["elec started"] == False:
-        await ctx.send("You can't vote outside an election")
-        return
-
-
+    
     if person_to_vote_for not in data:
         await ctx.send("That person does not exist")
         return
