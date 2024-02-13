@@ -45,25 +45,11 @@ def guilds_sign_up():
 
 async def send_to_bank(howmuch:int,ctx):
     bank = open_file("bank.json")
-    user_data = open_file(PATH_POINTS)
+    if (bank["points"]+howmuch) < 0:
+        await ctx.send("Bank is out of money, sorry")
+        raise bobwillendthis
+    bank["points"] += howmuch
 
-    president = None
-    for user in user_data:
-        if "titles" not in user_data[user]:
-            user_data[user]["titles"] = []
-        if "president" in user_data[user]["titles"]:
-            president = user
-
-    if president == None:
-        if (bank["points"]+howmuch) < 0:
-            await ctx.send("Bank is out of money, sorry")
-            raise bobwillendthis
-        bank["points"] += howmuch
-    else:
-        user_data[president][president] += howmuch
-
-    with open(PATH_POINTS, "w") as json_file:
-        json.dump(user_data, json_file,indent=4)
     with open("bank.json", "w") as json_file:
         json.dump(bank, json_file,indent=4)
 
