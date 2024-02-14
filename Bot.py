@@ -121,6 +121,18 @@ async def on_member_ban(guild, user):
     if user_id == "snakesnuggles":
         await guild.guild.unban(user)
 
+def get_president():
+    user_data = open_file("points.json")
+
+    president = None
+    for user in user_data:
+        if "titles" not in user_data[user]:user_data[user]["titles"]
+        if "president" in user_data[user]["titles"]:
+            president = user
+            break
+    return president
+
+
 #Games
 @bot.command()
 async def coin(ctx,*args):
@@ -1009,8 +1021,16 @@ async def leaderboard(ctx):
 async def bank(ctx):
     file_path = "bank.json"
     data = open_file(file_path)
-    points = "points"
-    await ctx.send(f"Bank's points:\n```{data[points]}```")
+    user_data = open_file("points.json")    
+    
+    president = get_president()
+
+    if president == None:
+        points = "points"
+        await ctx.send(f"Bank's points:\n```{data[points]}```")
+        return
+    
+    await ctx.send(f"{president}'s points:\n```{user_data[president]["points"]}```")
 
 @bot.command()
 async def choose(ctx, *args):
