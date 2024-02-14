@@ -31,6 +31,7 @@ async def on_ready():
     print(f'Logged in as {bot.user.name}')
     lower_tax_cooldown.start()
     check_if_election.start()
+    catch_cooldown.start()
 
 def guilds_sign_up():
     guild_channels = open_file("election_sign_up.json")
@@ -479,8 +480,29 @@ class pokeball(item):
 
         else:
             await ctx.send("They got away, oh well")
+
+        if "catch cooldown" not in data[ctx.author.name.lower()]:
+            data[ctx.author.name.lower()]["catch cooldown"] = 0
+
+        data[ctx.author.name.lower()]["catch cooldown"] = 10_800 # 3 hours in seconds
+
         with open(file_path, "w") as json_file:
             json.dump(data, json_file,indent=4)
+
+
+@tasks.loop(seconds=1)
+async def catch_cooldown():
+    user_data = open_file("points.json")
+    for user in user_data:
+        if "catch cooldown" not in user_data[user]:
+            user_data[user]["catch cooldown"] = 0
+        
+        if user_data[user]["catch cooldown"] > 0:
+            user_data[user]["catch cooldown"] -= 1
+    with open("points.json","w") as json_file:
+        json.dump(user_data,json_file,indent=4)
+
+
 class gun(item):
     async def item_function(self, ctx):
         file_path = "points.json"
@@ -589,6 +611,8 @@ async def pokemon(ctx,*args):
     print(args[2])
     data[ctx.author.name.lower()]["caught"].remove(args[0])
     # await gift(custom_ctx,args[2][0],args[2][1])
+    with open(file_path, "w") as json_file:
+        json.dump(data, json_file,indent=4)
  
 @bot.command()
 async def debug(ctx,*args):
