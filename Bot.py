@@ -13,12 +13,6 @@ intents.message_content = True
 intents.guilds = True
 intents.members = True
 
-PATH_POINTS = "points.json"
-PATH_BANK = "bank.json"
-PATH_SIGNED_UP = "election_sign_up.json"
-PATH_TIME_EVENTS = "time_events.json"
-PATH_SHOP = "shop.json"
-
 # Create a bot instance with a prefix and the intents
 bot = commands.Bot(command_prefix='!', intents=intents)
 bot_token_file = "C:\\Users\\daves\\bot_token.txt"
@@ -45,20 +39,24 @@ def guilds_sign_up():
 
 async def send_to_bank(howmuch:int,ctx):
     bank = open_file("bank.json")
-    # user_data = open_file("points.json")
+    user_data = open_file("points.json")
 
-    # president = None
-    # for user in user_data:
-    #     if "titles" not in user_data[user]:user_data[user]["titles"] = []
-    #     if "president" in user_data[user]["titles"]:
-    #         president = user
-    #         break
+    president = None
+    for user in user_data:
+        if "titles" not in user_data[user]: user_data[user]["titles"] = []
+        if "president" in user_data[user]["titles"]: 
+            president = user
 
-    # if president:
-    #     user_data[president]["titles"] += howmuch
-    #     with open("points.json", "w") as json_file:
-    #         json.dump(user_data, json_file,indent=4)
-    #     return
+            break
+    if president != None:
+        if "points" not in user_data[president]: 
+            user_data[president]["points"] = 0
+        user_data[president]["points"] += howmuch
+
+        with open("points.json", "w") as json_file:
+            json.dump(user_data, json_file,indent=4)
+        return user_data
+
     if (bank["points"]+howmuch) < 0:
         await ctx.send("Bank is out of money, sorry")
         raise bobwillendthis
@@ -66,6 +64,7 @@ async def send_to_bank(howmuch:int,ctx):
 
     with open("bank.json", "w") as json_file:
         json.dump(bank, json_file,indent=4)
+    return None
 
 class bobwillendthis(Exception):
     pass
@@ -128,8 +127,7 @@ async def coin(ctx,*args):
     
     file_path = "points.json"
     data = open_file(file_path)
-    if ctx.author.name.lower not in data:
-        data[ctx.author.name.lower] = {}
+    
     if "points" not in data[ctx.author.name.lower()]:
         data[ctx.author.name.lower()]["points"] = 0
     if "inventory" not in data[ctx.author.name.lower()]:
@@ -159,7 +157,8 @@ async def coin(ctx,*args):
         await ctx.send(args[0])
         data[ctx.author.name.lower()]["points"] += int(args[1]) + int(args[1])
         try:
-                await send_to_bank(-(int(args[1])),ctx)
+                thing = await send_to_bank(-(int(args[1])),ctx) 
+                data = thing if thing != None else data
         except bobwillendthis:
                 #data[ctx.author.name.lower()]["points"] += int(args[1])
                 return
@@ -173,14 +172,17 @@ async def coin(ctx,*args):
     if c[HorT] == args[0]:
         data[ctx.author.name.lower()]["points"] += int(args[1]) + int(args[1])
         try:
-            await send_to_bank(-(int(args[1])),ctx)
+            thing = await send_to_bank(-(int(args[1])),ctx) 
+            data = thing if thing != None else data
         except bobwillendthis:
             #data[ctx.author.name.lower()]["points"] += int(args[1])
             return
         await ctx.send(f"You won {int(args[1])*2}, you now have {points + int(args[1])}")
     
     else:
-        await send_to_bank(int(args[1]),ctx)
+        thing = await send_to_bank((int(args[1])),ctx) 
+        data = thing if thing != None else data
+
         await ctx.send(f"You lost {args[1]}, you now have {points - int(args[1])}")
     with open(file_path, "w") as json_file:
         json.dump(data, json_file,indent=4)
@@ -189,8 +191,7 @@ async def coin(ctx,*args):
 async def rps(ctx,d = None):
     file_path = "points.json"
     data = open_file(file_path)
-    if ctx.author.name.lower not in data:
-        data[ctx.author.name.lower] = {}
+
     if d != "Fgchatrtheerfg":
         message = ctx.message
     else:
@@ -272,7 +273,8 @@ async def rps(ctx,d = None):
                 if random.random() >= pokegetchance and "pokeball belt" in data[ctx.author.name.lower()]["inventory"]:
                     data[ctx.author.name.lower()]["inventory"].append("pokeball")
                     await ctx.send("You got a pokeball")
-                await send_to_bank(-(20*int(getwinstreak)),ctx)
+                thing = await send_to_bank(-(20*int(getwinstreak)),ctx) 
+                data = thing if thing != None else data
             except bobwillendthis:
                 return
         else:
@@ -289,14 +291,13 @@ async def rps(ctx,d = None):
 async def lir(ctx):
     file_path = "points.json"
     data = open_file(file_path)
-    if ctx.author.name.lower not in data:
-        data[ctx.author.name.lower] = {}
-
     if "lir_data" not in data[ctx.author.name.lower()] or data[ctx.author.name.lower()]["lir_data"] < 2:
         if data[ctx.author.name.lower()]["points"] > 2:
             data[ctx.author.name.lower()]["lir_data"] = 2
             data[ctx.author.name.lower()]["points"] -= 2
             await send_to_bank(2,ctx)
+            thing = await send_to_bank(2,ctx) 
+            data = thing if thing != None else data
         else:
             await ctx.send("Bro, how are you this poor? Can't even spare 2 points?")
             return
@@ -338,6 +339,8 @@ async def lir(ctx):
             await ctx.send(f"You won, the pot is now {lir_data}")
         elif player_choice == "cash":
             await send_to_bank(-data[ctx.author.name.lower()]["lir_data"],ctx)
+            thing = await send_to_bank(-data[ctx.author.name.lower()]["lir_data"],ctx) 
+            data = thing if thing != None else data
             data[ctx.author.name.lower()]["points"] += data[ctx.author.name.lower()]["lir_data"]
             await ctx.send(f"You cashed out for {lir_data}")
             data[ctx.author.name.lower()]["lir_data"] = 0 
@@ -374,7 +377,8 @@ class responding_to_times:
                     channel = bot.get_channel(channel_id)
                     if channel:
                         data[user_id]["points"] += points
-                        await send_to_bank(-points,channel)
+                        thing = await send_to_bank(-points,channel) 
+                        data = thing if thing != None else data
                 with open(file_path, "w") as json_file:
                     json.dump(data, json_file,indent=4)
             except bobwillendthis:
@@ -888,7 +892,9 @@ async def shop(ctx, *args):
     if args in data2:
         if data[ctx.author.name.lower()]["points"] >= data2[args]:
             data[ctx.author.name.lower()]["points"] -= data2[args]
-            try:await send_to_bank(data2[args],ctx)
+            try:
+                thing = await send_to_bank(data2[args],ctx) 
+                data = thing if thing != None else data
             except bobwillendthis:return
             if "inventory" in data[ctx.author.name.lower()]:
                 data[ctx.author.name.lower()]["inventory"].append(args)
@@ -1003,18 +1009,9 @@ async def leaderboard(ctx):
 async def bank(ctx):
     file_path = "bank.json"
     data = open_file(file_path)
-    user_data = open_file(PATH_POINTS)
+    points = "points"
+    await ctx.send(f"Bank's points:\n```{data[points]}```")
 
-    president = None
-    for user in user_data:
-        if "titles" not in user_data[user]:
-            user_data[user]["titles"] = []
-        if "president" in user_data[user]["titles"]:
-            president = user
-    if president == None:
-        await ctx.send(f"Bank's points:\n```{data['points']}```")
-    else:
-        await ctx.send(f"{president}'s points:\n```{user_data[president]['points']}```")
 @bot.command()
 async def choose(ctx, *args):
     choice = []
@@ -1141,7 +1138,8 @@ async def rob(ctx, *args):
     #bad
     else:
         data[ctx.author.name.lower()]["points"] -= int(args[1])
-        await send_to_bank(int(args[1]),ctx)
+        thing = await send_to_bank(int(args[1]),ctx) 
+        data = thing if thing != None else data
         await ctx.send(f"You failed now the bank gets {args[1]} point(s) from you. LOL")
     with open(file_path, "w") as json_file:
         json.dump(data, json_file,indent=4)
