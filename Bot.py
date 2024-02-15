@@ -304,16 +304,17 @@ async def rps(ctx,d = None):
 async def lir(ctx):
     file_path = "points.json"
     data = open_file(file_path)
-    if "lir_data" not in data[ctx.author.name.lower()] or data[ctx.author.name.lower()]["lir_data"] < 2:
-        if data[ctx.author.name.lower()]["points"] > 2:
-            data[ctx.author.name.lower()]["lir_data"] = 2
+
+    if "lir_data" not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["lir_data"] = 0
+    if data[ctx.author.name.lower()]["lir_data"] < 2:
+        if data[ctx.author.name.lower()]["points"] >= 2:
             data[ctx.author.name.lower()]["points"] -= 2
-            await send_to_bank(2,ctx)
-            thing = await send_to_bank(2,ctx) 
-            data = thing if thing != None else data
+            data[ctx.author.name.lower()]["lir_data"] = 2
         else:
-            await ctx.send("Bro, how are you this poor? Can't even spare 2 points?")
+            await ctx.send("How are you this poor? Can't even spair 2 points LOSER LOSER LOSER LOSER")
             return
+
     lir_data = data[ctx.author.name.lower()]["lir_data"]
 
     current_number = random.randint(1,10)
