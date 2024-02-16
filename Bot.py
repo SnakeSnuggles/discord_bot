@@ -779,7 +779,7 @@ async def send_election_start_and_end(start_or_end:str):
                 continue
             channel = guild.get_channel(signed_up_channeles[guild.id])
             if channel:
-                await channel.send('The election has now started')
+                await channel.send("The election has now started use '!vote user' to vote for someone")
     elif start_or_end == "end":
         winner = tally_and_give_president()
         for guild in bot.guilds:
@@ -854,6 +854,15 @@ async def sign_up(ctx):
 
     data[ctx.guild.id] = ctx.channel.id
     await ctx.send("You are signed up for the next election and for the next and for the next ect.")
+    with open("election_sign_up.json", "w") as json_file:
+        json.dump(data, json_file,indent=4)
+
+@bot.command()
+async def leave_elections(ctx):
+    data = open_file("election_sign_up.json")
+
+    del data[ctx.guild.id]
+    await ctx.send("You have left the next election and for the next and for the next ect.")
     with open("election_sign_up.json", "w") as json_file:
         json.dump(data, json_file,indent=4)
 
