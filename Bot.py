@@ -585,6 +585,17 @@ class statistical_advantage(item):
         
         with open(file_path, "w") as json_file:
             json.dump(data, json_file,indent=4)
+class spoon(item):
+    async def item_function(self, ctx):
+        user_data = open_file("points.json")
+        
+        if "points" not in user_data[self.used_on]:
+            user_data[self.used_on]["points"] = 0
+
+        user_data[self.used_on]["points"] *= 0.9
+        await ctx.send(f"You ate 10% of {self.used_on}'s points. They're gone now, fatty")
+        with open("points.json", "w") as json_file:
+            json.dump(user_data, json_file,indent=4)
 
 class emoji_gun(item):
     async def item_function(self, ctx):
@@ -866,6 +877,7 @@ async def leave_elections(ctx):
     with open("election_sign_up.json", "w") as json_file:
         json.dump(data, json_file,indent=4)
 
+
 @bot.command()
 async def use(ctx,*args):
     args = " ".join(args)
@@ -886,6 +898,7 @@ async def use(ctx,*args):
     uselessnessinst = item(user=user)
     statistical_advantageinst = statistical_advantage(user=user,has_inlimited_uses=True,rarity=1.1)
     emoji_guninst = emoji_gun(user=user,has_inlimited_uses=True,rarity=-5)
+    spooninst = spoon(user=user,used_on=used_on,has_inlimited_uses=True,rarity=-5)
     insult_guninst = insult_gun(user=user,used_on=used_on,has_inlimited_uses=True,rarity=15)
     items = {
         "pokeball":pokeballinst,
@@ -894,7 +907,8 @@ async def use(ctx,*args):
         "Uselessness":uselessnessinst,
         "Helm of Statistical Advantage":statistical_advantageinst,
         "Emoji gun":emoji_guninst,
-        "Insult gun":insult_guninst
+        "Insult gun":insult_guninst,
+        "spoon":spooninst
     }
 
     if args[0] not in items:
