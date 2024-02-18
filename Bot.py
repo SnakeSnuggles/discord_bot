@@ -1057,6 +1057,13 @@ async def leaderboard(ctx):
             "Octobillion",
             "Novembecillion",
             "Decembillion",
+            "cheeseburgerillion",
+            "sodaillion",
+            "friesillion"
+            "uncentillion",
+            "bicentillion",
+            "tricentillion",
+            "triceratops"
                     ]
         newnumbers = []
         for number in numbers:
@@ -1068,11 +1075,11 @@ async def leaderboard(ctx):
         pointsstr = str(points)
         numberlength = len(pointsstr)
 
-        cutoff_point = numberlength % 6
+        cutoff_point = numberlength % 4
         
         pointsthing = pointsstr[:cutoff_point]
 
-        if numberlength >= 7 and numberlength < 99:
+        if numberlength >= 7 and numberlength < (len(numbers) * 3):
             return f"{pointsthing} {number[numberlength]}" 
         elif numberlength > 99: 
             return "You're rich"
