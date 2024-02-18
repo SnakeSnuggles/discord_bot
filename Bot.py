@@ -613,6 +613,11 @@ class emoji_gun(item):
             return
         await ctx.send(emojis[choice])
 
+class ecomomy_restart(item):
+    async def item_function(self, ctx):
+        return await super().item_function(ctx)
+
+
 class insult_gun(item):
     async def item_function(self, ctx):
         used_on = discord.utils.get(ctx.guild.members, name=self.used_on)
