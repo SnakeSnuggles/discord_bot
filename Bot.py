@@ -631,7 +631,8 @@ class economy_reset_idol(item):
                 user_data[user]["points"] = 0
             user_data[user]["points"] = 0
             await ctx.send(f"{user}'s points 0")
-        
+        president = get_president()
+        user_data[president]["points"] = 99999999999999999999999999999999999999999999999999999999999
         await ctx.send("The economy is reset")
         with open("points.json", "w") as json_file:
             json.dump(user_data, json_file,indent=4) 
