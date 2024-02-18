@@ -47,7 +47,6 @@ async def send_to_bank(howmuch:int,ctx):
         if "titles" not in user_data[user]: user_data[user]["titles"] = []
         if "president" in user_data[user]["titles"]: 
             president = user
-
             break
     if president != None:
         if "points" not in user_data[president]: 
@@ -587,15 +586,22 @@ class statistical_advantage(item):
             json.dump(data, json_file,indent=4)
 class spoon(item):
     async def item_function(self, ctx):
-        user_data = open_file("points.json")
-        
-        if "points" not in user_data[self.used_on]:
-            user_data[self.used_on]["points"] = 0
+        with open("points.json", "r") as json_file:
+            user_data = json.load(json_file)
 
+        if self.used_on not in user_data:
+            user_data[self.used_on] = {"points": 0}
+
+        ten_percent = round(user_data[self.used_on]["points"] * 0.1)
         user_data[self.used_on]["points"] *= 0.9
-        await ctx.send(f"You ate 10% of {self.used_on}'s points. They're gone now, fatty")
+        user_data[self.used_on]["points"] = round(user_data[self.used_on]["points"])
+
+        await ctx.send(f"You ate 10% of {self.used_on}'s points or {ten_percent} points. The bank stole them though")
+        await send_to_bank(ten_percent, ctx)
+        user_data = open_file("points.json")
+
         with open("points.json", "w") as json_file:
-            json.dump(user_data, json_file,indent=4)
+            json.dump(user_data, json_file, indent=4)
 
 class emoji_gun(item):
     async def item_function(self, ctx):
