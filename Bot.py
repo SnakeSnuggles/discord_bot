@@ -613,11 +613,6 @@ class emoji_gun(item):
             return
         await ctx.send(emojis[choice])
 
-class ecomomy_restart(item):
-    async def item_function(self, ctx):
-        return await super().item_function(ctx)
-
-
 class insult_gun(item):
     async def item_function(self, ctx):
         used_on = discord.utils.get(ctx.guild.members, name=self.used_on)
@@ -626,6 +621,22 @@ class insult_gun(item):
         DM = await used_on.create_dm()
 
         await DM.send(insults[choice])
+
+class economy_reset_idol(item):
+    async def item_function(self, ctx):
+        user_data = open_file("points.json")
+        await ctx.send("By the power of points I guess the economy will be reset")
+        for user in user_data:
+            if "points" not in user_data[user]:
+                user_data[user]["points"] = 0
+            user_data[user]["points"] = 0
+            await ctx.send(f"{user}'s points 0")
+        
+        await ctx.send("The economy is reset")
+        with open("points.json", "w") as json_file:
+            json.dump(user_data, json_file,indent=4) 
+
+
 @bot.command()
 async def pokemon(ctx,*args):
     args = " ".join(args)
@@ -911,6 +922,7 @@ async def use(ctx,*args):
     emoji_guninst = emoji_gun(user=user,has_inlimited_uses=True,rarity=-5)
     spooninst = spoon(user=user,used_on=used_on,has_inlimited_uses=True,rarity=-5)
     insult_guninst = insult_gun(user=user,used_on=used_on,has_inlimited_uses=True,rarity=15)
+    ecomomy_restartinst = economy_reset_idol(user=user,rarity=15)
     items = {
         "pokeball":pokeballinst,
         "gun":guninst,
@@ -919,7 +931,8 @@ async def use(ctx,*args):
         "Helm of Statistical Advantage":statistical_advantageinst,
         "Emoji gun":emoji_guninst,
         "Insult gun":insult_guninst,
-        "spoon":spooninst
+        "spoon":spooninst,
+        "Economy reset idol":ecomomy_restartinst
     }
 
     if args[0] not in items:
@@ -1015,6 +1028,9 @@ async def leaderboard(ctx):
     file_path = "points.json"
     data = open_file(file_path)
     string = []
+    for user in data:
+        if "points" not in data[user]:
+            data[user]["points"] = 0  
     sorted_data = sorted(data.items(), key=lambda x: x[1]["points"], reverse=True)
     
     def points_to_readable(points:int):
@@ -1086,7 +1102,7 @@ async def leaderboard(ctx):
         else: 
             return pointsstr
     # Create a list of strings
-    
+
     string = [f"{x[0]} points: {points_to_readable(x[1]['points'])}" for x in sorted_data]
     string = string[0:10]
     string = '\n'.join(string)
