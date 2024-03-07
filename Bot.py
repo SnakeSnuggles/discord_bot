@@ -25,7 +25,10 @@ def open_file(file_path:str):
         data = json.load(file)
     return data
 
-# TODO: Make it so all the files if the files don't exist are made and stuff
+def save_file(file_path:str, data:dict):
+    with open(file_path,"w") as json_file:
+        json.dump(data, json_file,indent=4)
+
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}')
@@ -96,6 +99,7 @@ async def on_message_delete(message):
     if message.author != bot.user and chance == 1:
         deleted_content = message.content
         await message.channel.send(f'I saw that, you deleted "{deleted_content}" {message.author.mention}')
+
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
@@ -111,6 +115,32 @@ async def on_message(message):
 
     if random.randint(1,10000) == 1:
         await message.channel.send("I hate my life, stop sending messages please")
+    data = open_file("points.json")
+
+    if message.author.name.lower() not in data:
+        data[message.author.name.lower()] = {}
+    if "points" not in data:
+        data[message.author.name.lower()]["points"] = 0
+    if "inventory" not in data:
+        data[message.author.name.lower()]["has_voted"] = False
+    if "win_streak_rps" not in data:
+        data[message.author.name.lower()]["win_streak_rps"] = 1
+    if "has_voted" not in data:
+        data[message.author.name.lower()]["has_voted"] = False
+    if "helm_on" not in data:
+        data[message.author.name.lower()]["helm_on"] = False
+    if "voted_for" not in data:
+        data[message.author.name.lower()]["voted_for"] = None
+    if "votes" not in data:
+        data[message.author.name.lower()]["votes"] = 0
+    if "titles" not in data:
+        data[message.author.name.lower()]["titles"] = []
+    if "lir_data" not in data:
+        data[message.author.name.lower()]["lir_data"] = 2   
+    if "catch cooldown" not in data:
+        data[message.author.name.lower()]["catch cooldown"] = 0
+
+    save_file("points.json",data)
     await bot.process_commands(message) 
 
 @bot.event
