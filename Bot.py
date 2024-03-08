@@ -119,25 +119,25 @@ async def on_message(message):
 
     if message.author.name.lower() not in data:
         data[message.author.name.lower()] = {}
-    if "points" not in data:
+    if "points" not in data[message.author.name.lower()]:
         data[message.author.name.lower()]["points"] = 0
-    if "inventory" not in data:
+    if "inventory" not in data[message.author.name.lower()]:
         data[message.author.name.lower()]["has_voted"] = False
-    if "win_streak_rps" not in data:
+    if "win_streak_rps" not in data[message.author.name.lower()]:
         data[message.author.name.lower()]["win_streak_rps"] = 1
-    if "has_voted" not in data:
+    if "has_voted" not in data[message.author.name.lower()]:
         data[message.author.name.lower()]["has_voted"] = False
-    if "helm_on" not in data:
+    if "helm_on" not in data[message.author.name.lower()]:
         data[message.author.name.lower()]["helm_on"] = False
-    if "voted_for" not in data:
+    if "voted_for" not in data[message.author.name.lower()]:
         data[message.author.name.lower()]["voted_for"] = None
-    if "votes" not in data:
+    if "votes" not in data[message.author.name.lower()]:
         data[message.author.name.lower()]["votes"] = 0
-    if "titles" not in data:
+    if "titles" not in data[message.author.name.lower()]:
         data[message.author.name.lower()]["titles"] = []
-    if "lir_data" not in data:
+    if "lir_data" not in data[message.author.name.lower()]:
         data[message.author.name.lower()]["lir_data"] = 2   
-    if "catch cooldown" not in data:
+    if "catch cooldown" not in data[message.author.name.lower()]:
         data[message.author.name.lower()]["catch cooldown"] = 0
 
     save_file("points.json",data)
