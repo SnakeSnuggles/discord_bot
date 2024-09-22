@@ -13,6 +13,7 @@ intents.message_content = True
 intents.guilds = True
 intents.members = True
 
+
 # Create a bot instance with a prefix and the intents
 bot = commands.Bot(command_prefix='!', intents=intents)
 bot_token_file = "C:\\Users\\daves\\bot_token.txt"
@@ -405,6 +406,17 @@ async def lir(ctx):
 
     except TimeoutError:
         await ctx.send("You didn't make a choice in time. Game over!")  
+
+@bot.command()
+async def stock(ctx, mode="view", stock=None, amount=1):
+    # Show all the stocks, prices, and how much you own out of the amount the bank owns
+    # Should also show if the stock went up or down since the last update
+    # Be able to buy and sell stocks. Buying should remove points and the stocks that the bank owns and the opposite for sell
+    # After every 2 minutes update the stock market (Don't know how prob randomly)
+    # Add some admin commands like crash or boom
+    # Add a more in depth look for stocks
+    print("")
+    
 #end
 
 #Earning points
