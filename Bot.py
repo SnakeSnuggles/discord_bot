@@ -117,7 +117,7 @@ async def on_message(message):
     if random.randint(1,10000) == 1:
         await message.channel.send("I hate my life, stop sending messages please")
     data = open_file("points.json")
-
+    
     if message.author.name.lower() not in data:
         data[message.author.name.lower()] = {}
     if "points" not in data[message.author.name.lower()]:
@@ -673,7 +673,7 @@ class economy_reset_idol(item):
                 user_data[user]["points"] = 0
             user_data[user]["points"] = 0
             await ctx.send(f"{user}'s points 0")
-        send_to_bank(999999999999999999999999999999999999999999999999999999999999999,self.ctx)
+        await send_to_bank(999999999999999999999999999999999999999999999999999999999999999,self.ctx)
         await ctx.send("The economy is reset")
         with open("points.json", "w") as json_file:
             json.dump(user_data, json_file,indent=4) 
