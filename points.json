@@ -1,6 +1,6 @@
 {
     "snakesnuggles": {
-        "points": 9606526887300181321736179439255020127869740032792722853463395001398,
+        "points": 9606526887300181321736179439255020127869740032792722853463395001378,
         "inventory": [
             "Helm of Statistical Advantage",
             "Emoji gun",
@@ -12,13 +12,8 @@
         "voted_for": null,
         "votes": 0,
         "titles": [],
-        "lir_data": 16,
-        "catch cooldown": 0,
-        "has_used_day_thing": [
-            false,
-            false,
-            true
-        ]
+        "lir_data": 8,
+        "catch cooldown": 0
     },
     "cheese2144": {
         "points": 13120656274949605654336733838835180141351647363629134775396221420547839791023018002134811011742951952513132216004378604,
@@ -106,7 +101,7 @@
         "catch cooldown": 0
     },
     "cobid18": {
-        "points": 73306,
+        "points": 81451,
         "inventory": [],
         "win_streak_rps": 1,
         "titles": [],
