@@ -60,39 +60,33 @@ class gun(item):
         save_file(points_P,data)
         save_file(bank_P,bank)
 
-class fanum_tax(item):
-    async def item_function(self, ctx,function:str):
-        data = open_file(points_P)
-
-        if function == "buff":
-            await ctx.send("This is still being worked on please stand by")
-        if function == "debt":
-            if data[self.used_on]["points"] == 2500:
-                data[self.used_on]["points"] = -2500
-                await ctx.send(f"You set {self.used_on} 2500 debt")
-            else:
-                if data[self.used_on]["points"] < 0 and self.used_on != "elichat3025":
-                    await ctx.send("You can't put people into debt more debt")
-                else:
-                    data[self.used_on]["points"] -= 2500
-                    await ctx.send(f"You got rid of 2500 points from {self.used_on}'s bank")
-        else:
-            await ctx.send("That function does not exist")
-        save_file(points_P,data)
+# class fanum_tax(item):
+#     async def item_function(self, ctx,function:str):
+#         data = open_file(points_P)
+# 
+#         if function == "buff":
+#             await ctx.send("This is still being worked on please stand by")
+#         if function == "debt":
+#             if data[self.used_on]["points"] == 2500:
+#                 data[self.used_on]["points"] = -2500
+#                 await ctx.send(f"You set {self.used_on} 2500 debt")
+#             else:
+#                 if data[self.used_on]["points"] < 0 and self.used_on != "elichat3025":
+#                     await ctx.send("You can't put people into debt more debt")
+#                 else:
+#                     data[self.used_on]["points"] -= 2500
+#                     await ctx.send(f"You got rid of 2500 points from {self.used_on}'s bank")
+#         else:
+#             await ctx.send("That function does not exist")
+#         save_file(points_P,data)
 class statistical_advantage(item):
     async def item_function(self, ctx):
-        data = open_file(points_P)
-
-        if "helm_on" not in data[self.user]:
-            data[self.user]["helm_on"] = False
-        
-        if data[self.user]["helm_on"] == True:
-            data[self.user]["helm_on"] = False
-            await ctx.send("Helm is now off")
-        elif data[self.user]["helm_on"] == False:
+        user_object = users[self.user]
+        user_object.modify("helm_on", not user_object.get("helm_on"))
+        if user_object.get("helm_on") == True:
             await ctx.send("Helm is now on")
-            data[self.user]["helm_on"] = True
-        save_file(points_P,data)
+        elif user_object.get("helm_on") == False:
+            await ctx.send("Helm is now off")
 class spoon(item):
     async def item_function(self, ctx):
         user_data = open_file(points_P) 

@@ -1,18 +1,18 @@
 {
     "snakesnuggles": {
-        "points": 9606526887300181321736179439255020127869740032792722853463395001398,
+        "points": 2518293384344418732405159022924067996400285131156415539698308219272955730,
         "inventory": [
             "Helm of Statistical Advantage",
             "Emoji gun",
             "spoon"
         ],
-        "win_streak_rps": 5,
-        "helm_on": true,
+        "win_streak_rps": 2,
+        "helm_on": false,
         "has_voted": false,
         "voted_for": null,
         "votes": 0,
         "titles": [],
-        "lir_data": 16,
+        "lir_data": 8,
         "catch cooldown": 0,
         "has_used_day_thing": [
             false,
@@ -21,7 +21,7 @@
         ]
     },
     "cheese2144": {
-        "points": 13120656274949605654336733838835180141351647363629134775396221420547839791023018002134811011742951952513132216004378604,
+        "points": 5083211070041894561551510721707970579528837587299274996293443062466251522213751181624590710902465005100114743388012524,
         "inventory": [
             "fanum tax wand",
             "kitchen knife",
@@ -36,7 +36,12 @@
             "president"
         ],
         "catch cooldown": 0,
-        "helm_on": false
+        "helm_on": false,
+        "has_used_day_thing": [
+            false,
+            false,
+            false
+        ]
     },
     "jele7469": {
         "points": 6084133695290114793047180455165832990026656508528389106856987272610203862711863722073595058813842340577579083246562138353329453980824628341152575631856056044012313607964165017176536502774742489100474598897877687746300263593435489153141924109803749518890968748680290905514402988671818099223775774292,
@@ -51,7 +56,12 @@
         "has_voted": false,
         "voted_for": null,
         "catch cooldown": 0,
-        "helm_on": false
+        "helm_on": false,
+        "has_used_day_thing": [
+            false,
+            false,
+            false
+        ]
     },
     "luv43": {
         "points": 7694910103599669205074632748432249949598134427469800227334979572614882734498186013991909017895245124768497336850933038685556968077807652028453102225564514351085576227749358374547060780078759340564828585802793146783205863198105692027723458686555902345226297374788024672573016361561352346135474940600011135374387236252543670018913531067138300633527471520847807893455830997203287167864145676805093977521371636735711892036322029012288365624750502764673577652696979453321735356489835524874935627834731080645710721725521510874413302009338960640750808379159201346179016191383635898264842094638,
@@ -61,7 +71,14 @@
         "votes": 0,
         "has_voted": false,
         "voted_for": null,
-        "catch cooldown": 0
+        "catch cooldown": 0,
+        "helm_on": false,
+        "lir_data": 0,
+        "has_used_day_thing": [
+            false,
+            false,
+            false
+        ]
     },
     "cobid23": {
         "points": 716241701517892027121508233582792331300342949221169133799341025750634020782135390629358364211311433071522690304319861115236820651,
@@ -71,7 +88,14 @@
         "votes": 0,
         "has_voted": false,
         "voted_for": null,
-        "catch cooldown": 0
+        "catch cooldown": 0,
+        "helm_on": false,
+        "lir_data": 0,
+        "has_used_day_thing": [
+            false,
+            false,
+            false
+        ]
     },
     "elichat3025": {
         "points": 131206562749496038625409400965918116953978229088737122780798236328282118710317372311013140676141956478111375987186860032,
@@ -83,7 +107,14 @@
         ],
         "has_voted": false,
         "voted_for": null,
-        "catch cooldown": 0
+        "catch cooldown": 0,
+        "helm_on": false,
+        "lir_data": 0,
+        "has_used_day_thing": [
+            false,
+            false,
+            false
+        ]
     },
     "nightlight_official": {
         "points": 81451,
@@ -93,7 +124,14 @@
         "votes": 0,
         "has_voted": false,
         "voted_for": null,
-        "catch cooldown": 0
+        "catch cooldown": 0,
+        "helm_on": false,
+        "lir_data": 0,
+        "has_used_day_thing": [
+            false,
+            false,
+            false
+        ]
     },
     "notdanbrokereality": {
         "points": 81451,
@@ -103,7 +141,14 @@
         "votes": 0,
         "has_voted": false,
         "voted_for": null,
-        "catch cooldown": 0
+        "catch cooldown": 0,
+        "helm_on": false,
+        "lir_data": 0,
+        "has_used_day_thing": [
+            false,
+            false,
+            false
+        ]
     },
     "cobid18": {
         "points": 73306,
@@ -113,7 +158,14 @@
         "votes": 0,
         "has_voted": false,
         "voted_for": null,
-        "catch cooldown": 0
+        "catch cooldown": 0,
+        "helm_on": false,
+        "lir_data": 0,
+        "has_used_day_thing": [
+            false,
+            false,
+            false
+        ]
     },
     "kaidenkiller6000killer": {
         "points": 81451,
@@ -123,6 +175,47 @@
         "votes": 0,
         "has_voted": false,
         "voted_for": null,
-        "catch cooldown": 0
+        "catch cooldown": 0,
+        "helm_on": false,
+        "lir_data": 0,
+        "has_used_day_thing": [
+            false,
+            false,
+            false
+        ]
+    },
+    "viggle": {
+        "points": 0,
+        "has_voted": false,
+        "win_streak_rps": 1,
+        "helm_on": false,
+        "voted_for": null,
+        "votes": 0,
+        "titles": [],
+        "lir_data": 2,
+        "catch cooldown": 0,
+        "inventory": [],
+        "has_used_day_thing": [
+            false,
+            false,
+            false
+        ]
+    },
+    "discord developers #developer-news": {
+        "points": 0,
+        "has_voted": false,
+        "win_streak_rps": 1,
+        "helm_on": false,
+        "voted_for": null,
+        "votes": 0,
+        "titles": [],
+        "lir_data": 2,
+        "catch cooldown": 0,
+        "inventory": [],
+        "has_used_day_thing": [
+            false,
+            false,
+            false
+        ]
     }
 }

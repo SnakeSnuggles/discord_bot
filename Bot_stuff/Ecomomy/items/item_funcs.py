@@ -57,8 +57,7 @@ async def use(ctx,*args):
 
     if items[args[0]].has_inlimited_uses == False:
         data[user]["inventory"].remove(args[0])
-    with open("points.json", "w") as json_file:
-        json.dump(data, json_file,indent=4)
+    save_file(points_P,data)
     if items[args[0]].has_more_functions == True:
         await items[args[0]].item_function(ctx=ctx,function=args[2])
     else:
@@ -97,8 +96,7 @@ async def shop(ctx, *args):
 async def pokemon(ctx,*args):
     args = " ".join(args)
     args = args.split(",")
-    file_path = "points.json"
-    data = open_file(file_path)
+    data = open_file(points_P)
     # custom_ctx = copy.copy(ctx)
 
     if args[0] not in data[ctx.author.name.lower()]["caught"]:

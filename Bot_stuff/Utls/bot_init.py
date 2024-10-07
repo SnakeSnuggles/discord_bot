@@ -7,7 +7,6 @@ import json
 import time
 from .global_paths import *
 import os
-
 intents = discord.Intents.default()
 intents.typing = False
 intents.presences = False
@@ -25,6 +24,9 @@ with open(bot_token_file, 'r') as file:
         bot_Token = file.readline()
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
+
+
+
 
 def run_in_script_directory(func):
     def wrapper(*args, **kwargs):
@@ -47,3 +49,11 @@ def open_file(file_path: str):
 def save_file(file_path: str, data: dict):
     with open(file_path, "w") as json_file:
         json.dump(data, json_file, indent=4)
+
+
+from .user_class import User_class
+all_of_points = open_file(points_P)
+users = {}
+for name, data in all_of_points.items():  
+    users[name] = User_class(name, data)
+    users[name].check()
