@@ -53,7 +53,7 @@ def save_file(file_path: str, data: dict):
 
 from .user_class import User_class
 all_of_points = open_file(points_P)
-users = {}
+users:dict[str, User_class] = {}
 for name, data in all_of_points.items():  
     users[name] = User_class(name, data)
     users[name].check()

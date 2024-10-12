@@ -33,11 +33,9 @@ class pokeball(item):
 
 class gun(item):
     async def item_function(self, ctx):
-        data = open_file(points_P)
+        user_object = users[ctx.author.name.lower()]
 
-        bank = open_file(bank_P)
-
-        inv = data[ctx.author.name.lower()]["inventory"]
+        inv = user_object.get("inventory") 
         if "bullet" not in inv:
             await ctx.send("You don't have bullet.")
             return
@@ -49,16 +47,17 @@ class gun(item):
 
         if robsucceses != 1:
             howmuch_to_steal = random.randint(1,bank["points"])
-            data[ctx.author.name.lower()]["points"] += howmuch_to_steal
+            user_object.add_points(howmuch_to_steal)
+            await send_to_bank(ctx,-howmuch_to_steal)
             await ctx.send(f"You did it, you stole {howmuch_to_steal} point(s) from the bank")
         else:
             await ctx.send("You failed")
-        if "balaclava" in inv:
-            inv.remove("balaclava")
-        if "bullet" in inv:
-            inv.remove("bullet")
-        save_file(points_P,data)
-        save_file(bank_P,bank)
+        to_remove = ["balaclava", "bullet"]
+        
+        for item in to_remove:
+            user_object.inventory_remove(item)
+
+
 
 # class fanum_tax(item):
 #     async def item_function(self, ctx,function:str):
@@ -89,18 +88,18 @@ class statistical_advantage(item):
             await ctx.send("Helm is now off")
 class spoon(item):
     async def item_function(self, ctx):
-        user_data = open_file(points_P) 
-
-        if self.used_on not in user_data:
+            
+        if self.used_on not in users:
             ctx.send("that user does not exist")
             return
-        ten_percent = round(user_data[self.used_on]["points"] * 0.1)
-        user_data[self.used_on]["points"] -= ten_percent
+        user_object = users[self.used_on]
+
+        ten_percent = round(user_object.get("points") * 0.1)
+        user_object.add_points(-ten_percent)
 
         await ctx.send(f"You ate 10% of {self.used_on}'s points or {ten_percent} points. The bank stole them though")
         await send_to_bank(ten_percent, ctx)
 
-        save_file(points_P,user_data)
 class emoji_gun(item):
     async def item_function(self, ctx):
         emojis = ["😀","😃","😄","😁","😆","🥹","😅","😂","🤣","🥲","☺️","😊","😇","🙂","🙃","😉","😌","😍","🥰","😘","😗","😙","😚","😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🥸","🤩","🥳","😏","😒","😞","😔","😟","😕","☹️","🙁","😣","😖","🤬","😡","😠","😤","😤","😭","😢","🥺","😩","😫","🤯","😳","🥵","🥶","😶‍🌫️","😱","😨","😰","😥","🫠","🤫","🫡","🫢","🤭","🫣","🤔","🤗","😓","🤥","😶","🫥","😐","🫤","😑","😬","🙄","😯","😮‍💨","😪","🤤","😴","🥱","😲","😮","😦","😧","😵","😵‍💫","🤐","🥴","🤢","🤮","🤧","😷","🤒","💩","🤡","👺","👹","👿","😈","🤠","🤑","🤕","👻","👻","💀","☠️","👽","👾","🤖","🎃","😺","😸","🤲","🫶","😾","😿","🙀","😽","😼","😻","😹","👐","👐","🙌","👏","🤝","👍","👎","👊","✊","🤛","🤏","🤌","👌","🤘","🤟","🫰","✌️","🤞","🤜","🫳","🫴","👈","👉","👆","👇","☝️","✋","🤚","🖐️","🖖","👋","🤙","🫲","🫱","💪","🦾","🖕","👄","💋","💄","🦿","🦵","🦶","🫵","🙏","✍️","🫦","🦷","👅","👂","🦻","👃","👣","👁️","👀","🧒","👶","🫂","👥","👤","🗣️","🧠","🫁","🫀"]
@@ -122,13 +121,10 @@ class insult_gun(item):
 
 class economy_reset_idol(item):
     async def item_function(self, ctx):
-        user_data = open_file(points_P)
+        
         await ctx.send("By the power of points I guess the economy will be reset")
-        for user in user_data:
-            if "points" not in user_data[user]:
-                user_data[user]["points"] = 0
-            user_data[user]["points"] = 0
+        for user in users:
+            users[user].modify("points", 0)
             await ctx.send(f"{user}'s points 0")
         await send_to_bank(999999999999999999999999999999999999999999999999999999999999999,self.ctx)
         await ctx.send("The economy is reset")
-        save_file(points_P,user_data)

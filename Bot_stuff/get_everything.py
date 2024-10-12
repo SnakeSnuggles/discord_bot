@@ -6,4 +6,4 @@ from .Ecomomy.president import *
 from .Ecomomy.user_interaction import *
 from .Ecomomy.jobs.being_nice import *
 from .Ecomomy.admin import *
-
+from .docs import *

@@ -7,7 +7,6 @@ async def on_ready():
     #check_if_election.start()
     #catch_cooldown.start()
 
-
 @bot.event
 async def on_reaction_add(reaction, user):
     reaction_messages = {

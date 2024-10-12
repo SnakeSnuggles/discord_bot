@@ -86,7 +86,7 @@ async def leaderboard(ctx):
 
 @bot.command()
 async def void(ctx,*args):
-    data = open_file(points_P)
+    user_object = users[ctx.author.name.lower()]
 
     if int(args[0]) > data[ctx.author.name.lower()]["points"]:
         await ctx.send("You do not have that much to void")
@@ -94,10 +94,8 @@ async def void(ctx,*args):
     if int(args[0]) < 0:
         await ctx.send("You can't void negative points")
         return
-    data[ctx.author.name.lower()]["points"]-=int(args[0])
-    points = data[ctx.author.name.lower()]["points"]
-    await ctx.send(f"You voided {args[0]} you now have {points}")
-    save_file(points_P,data)
+    user_object.add_points(-int(args[0]))
+    await ctx.send(f"You voided {args[0]} you now have {user_object.get("points")}")
 @bot.command()
 async def choose(ctx, *args):
     choice = []
@@ -112,7 +110,6 @@ async def choose(ctx, *args):
 async def should(ctx):
     dic = {1 : "yes", 0 : "no"}
     await ctx.send(dic[random.randint(0,1)])
-
 
 @bot.command()
 async def ourlist(ctx,*args):
@@ -156,82 +153,11 @@ async def yourthoughts(ctx):
             await ctx.send("I think it's bad")
 
 @bot.command()
-async def command(ctx):
-    await ctx.send(
-'''
-I will not tell you what these do:
-```
-!choose item,item,ect
-!bank
-!should
-!coin (heads or tails) (How much you want to bet)
-!rps
-!words
-!use (item) (args)
-!void (how much)
-!gift (user) (How much)
-!lir
-!shop (what you want to but, write nothing if you want to see the list)
-!goodnight (7pm-11pm)
-!goodmorning (1am-10am)
-!goodnoon (12pm-1pm)
-!ballsack
-!yourthoughts
-!command (I don't know why you'd need to know this if you just did it)
-!ourlist (The title of the list),(what you add to the list)
-```
-''')
-
-@bot.command()
 async def clear(ctx):
     await ctx.send('''
 ‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n‎\n                       
 ''')
 
-@bot.command()
-async def docs(ctx):
-    await ctx.send(
-'''
-Docs
-```
-!choose item,item,ect
-    chooses from the list you provide
-!bank
-    shows how much the bank has
-!should
-    says yes or no to the question you ask
-!coin (heads or tails) (How much you want to bet)
-    gives you points if you win lose points if you lose
-!rps
-    play rps, get a win streak
-!words
-    just use it
-!use (item),(other args)
-    uses the item
-!void (how much)
-    gets rid of the points you specify
-!gift (user) (How much)
-    gifts the user the amount you specifyed
-!shop (what you want to but, write nothing if you want to see the list)
-    buy stuff
-!goodnight (7pm-11pm)
-    say that to the bot
-!lir
-    plays the let it ride game
-!goodmorning (1am-10am)
-    say that to the bot
-!goodnoon (12pm-1pm)
-    say that to the bot
-!ballsack
-    no
-!yourthoughts
-    says "I think it's good" or "I think it's bad" to your question
-!command
-    shows the list of commands
-!ourlist (The title of the list),(what you add to the list)
-    allows you to make a list of items saved for later
-```
-''')
 @bot.command()
 async def mock(ctx, *args):
     args = " ".join(args)
@@ -259,6 +185,5 @@ async def words(ctx):
 @bot.command()
 async def bank(ctx):
     data = open_file(bank_P)
-
     await ctx.send(f"Bank's points:\n```{data["points"]}```")
     return

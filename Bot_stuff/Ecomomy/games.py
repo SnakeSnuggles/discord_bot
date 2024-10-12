@@ -57,10 +57,11 @@ async def lir(ctx):
     
     user_object = users[ctx.author.name.lower()]
 
-    if user_object.get("points") >= 2:
-        if user_object.get("lir_data") < 2:
-            user_object.add_points(-2)
-            user_object.modify("lir_data", 2)
+    if user_object.get("lir_data") < 2:
+        if user_object.add_points(-2):
+            await ctx.send("You don't have enough")
+            return
+        user_object.modify("lir_data", 2)
     else:
         await ctx.send("How are you this poor? Can't even spair 2 points LOSER LOSER LOSER LOSER")
         return
@@ -196,6 +197,52 @@ async def rps(ctx,d = None):
 
     except TimeoutError:
         await ctx.send("You didn't make a choice in time. Game over!")  
+
+@bot.command()
+async def hangman(ctx):
+
+
+    if users[ctx.author.name.lower()].add_points(-5000):
+       await ctx.send("You need 5000 points to play")
+       return
+
+
+    list_of_words = ['fart','jump', 'act','answer', 'approve', 'arrange', 'break', 'build', 'buy', 'coach', ' colour', 'cough', 'create', 'complete', 'cry', 'dance', 'describe', 'draw', 'drink', 'eat', 'edit', 'enter', 'exit', 'imitate', 'invent', 'jump', 'laugh', 'lie', 'listen', 'paint', 'plan', 'play', 'read', 'replace', 'run', 'scream', 'see', 'shout', 'sing', 'skip', 'sleep', 'sneeze', 'solve', 'study', 'teach', 'touch', 'turn', 'walk', 'win', 'write', 'whistle', 'yank', 'zip',"abcdefghijklmnopqrstuvwxyz"]
+    word = random.choice(list_of_words) 
+
+    chances = 6
+    revealed = "-" * len(word)
+    won = False
+    def check(m):
+        return m.author == ctx.author and m.channel == ctx.channel
+    while chances > 0:
+        
+        await ctx.send(f"{ctx.author.mention}\nWord:{revealed}\nYou have 1 minute to make your guess\nChances:{chances}")
+        
+        try:
+            guess = await bot.wait_for("message",check=check,timeout=60)
+            if len(guess.content) > len(word):
+                await ctx.send(f"{ctx.author.mention}\nCan't guess a word longer than the mystery word") 
+                continue
+        except TimeoutError:
+            await ctx.send(f"{ctx.author.mention}\nYou did not make a choice in time")
+            break
+        for letter in guess.content.lower():
+            if letter not in word:
+                continue
+
+            revealed = ''.join([letter if word[i] == letter else revealed[i] for i in range(len(word))])
+
+        if "-" not in list(revealed):
+            won = True 
+            break
+        chances -= 1
+        
+    if won:
+        users[ctx.author.name].add_points(10**chances)
+        await ctx.send(f"{ctx.author.mention}\nYou won {10**chances} points good for you\nThe word was: {revealed}") 
+        return 
+    await ctx.send(f"{ctx.author.mention}\nYou could not guess it lol, here it is: {word}")
 @bot.command()
 async def stock(ctx, mode="view", stock=None, amount=1):
     # Show all the stocks, prices, and how much you own out of the amount the bank owns
@@ -205,4 +252,3 @@ async def stock(ctx, mode="view", stock=None, amount=1):
     # Add some admin commands like crash or boom
     # Add a more in depth look for stocks
     print("")
-# TODO add hang man

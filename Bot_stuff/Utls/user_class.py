@@ -1,4 +1,3 @@
-# TODO make this at some point in the near future
 from .bot_init import *
 class User_class():
     def __init__(self, user_name, user_data):
@@ -45,6 +44,12 @@ class User_class():
     def append_inventory(self, item):
         self.user_data["inventory"].append(item)
         self.save_to_points()
+    def remove_inventory(self,item):
+        if item not in self.user_data["inventory"]:
+            raise Exception("That is not a value in that user's inventory")
+        self.user_data["inventory"].remove(item)
+
+        self.save_to_points()
     def add_arb(self, key, add_amount):
         if type(add_amount) != int:
             raise Exception("Can not put a non int value into the points feild")
@@ -62,9 +67,11 @@ class User_class():
         if type(points) != int:
             raise Exception("Can not put a non int value into the points feild")
 
+        if points < 0:
+            if (self.get("points") + points) < 0:
+                return True 
+
         self.user_data["points"] += points
-        
+         
         self.save_to_points()
-
-
 
