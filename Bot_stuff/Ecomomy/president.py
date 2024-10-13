@@ -1,65 +1,22 @@
 from ..Utls.bot_init import *
 
-@bot.command()
-async def tax(ctx,tax_amount):
-    points = "points.json"
-    data = open_file(points)
-    
-    bank_path = "bank.json"
-    bank_data = open_file(bank_path)
 
-    if "titles" not in data[ctx.author.name.lower()]:
-        data[ctx.author.name.lower()]["titles"] = []
-    if "tax_cooldown" not in bank_data:
-        bank_data["tax_cooldown"] = 0
+'''
+How I want this to work because this is garbage
 
-    if "president" not in data[ctx.author.name.lower()]["titles"]:
-        await ctx.send("You are not the president")
-        return
-    if bank_data["tax_cooldown"] > 0:
-        await ctx.send(f"Tax is on cooldown for the next {bank_data['tax_cooldown']} seconds")
-        return
-
-    tax_amount = float(tax_amount)
-    if tax_amount > 30:
-        await ctx.send("That is too much tax")
-        return
-    if tax_amount < 0:
-        await ctx.send("You're too generous but as your advisor I can't let you do that")
-        return
-    total_tax = 0
-    for user in data:
-        if user == ctx.author.name.lower():
-            continue
-        try:
-            data[user]["points"] -= round(data[user]["points"] * (tax_amount/100))
-            data[ctx.author.name.lower()]["points"] += round(data[user]["points"] * (tax_amount/100))
-            total_tax += round(data[user]["points"] * 0.05)
-        except OverflowError:
-            error_tax = 99999999999999999999999999999999999999
-            data[user]["points"] -= error_tax
-            data[ctx.author.name.lower()]["points"] += error_tax
-            total_tax += error_tax
-    
-    await ctx.send(f"The president collected {total_tax} points worth of tax")
-    bank_data["tax_cooldown"] = 1200
-
-    with open(bank_path, "w") as json_file:
-        json.dump(bank_data, json_file,indent=4)
-    with open(points, "w") as json_file:
-        json.dump(data, json_file,indent=4)
-
+- Time calculation should check if the next election < than what it is rn and it should still run
+- Then all other functions in this file should use better functions 
+'''
 @tasks.loop(seconds=1)
 async def lower_tax_cooldown():
-    bank_path = "bank.json"
-    bank_data = open_file(bank_path)
+    bank_data = open_file(bank_P)
     if "tax_cooldown" not in bank_data:
         bank_data["tax_cooldown"] = 0
     
     if bank_data["tax_cooldown"] > 0:
         bank_data["tax_cooldown"] -= 1
 
-    with open(bank_path, "w") as json_file:
+    with open(bank_P, "w") as json_file:
         json.dump(bank_data, json_file,indent=4)
 
 
@@ -244,3 +201,52 @@ def get_president():
             president = user
             break
     return president
+
+@bot.command()
+async def tax(ctx,tax_amount):
+    points = "points.json"
+    data = open_file(points)
+    
+    bank_path = "bank.json"
+    bank_data = open_file(bank_path)
+
+    if "titles" not in data[ctx.author.name.lower()]:
+        data[ctx.author.name.lower()]["titles"] = []
+    if "tax_cooldown" not in bank_data:
+        bank_data["tax_cooldown"] = 0
+
+    if "president" not in data[ctx.author.name.lower()]["titles"]:
+        await ctx.send("You are not the president")
+        return
+    if bank_data["tax_cooldown"] > 0:
+        await ctx.send(f"Tax is on cooldown for the next {bank_data['tax_cooldown']} seconds")
+        return
+
+    tax_amount = float(tax_amount)
+    if tax_amount > 30:
+        await ctx.send("That is too much tax")
+        return
+    if tax_amount < 0:
+        await ctx.send("You're too generous but as your advisor I can't let you do that")
+        return
+    total_tax = 0
+    for user in data:
+        if user == ctx.author.name.lower():
+            continue
+        try:
+            data[user]["points"] -= round(data[user]["points"] * (tax_amount/100))
+            data[ctx.author.name.lower()]["points"] += round(data[user]["points"] * (tax_amount/100))
+            total_tax += round(data[user]["points"] * 0.05)
+        except OverflowError:
+            error_tax = 99999999999999999999999999999999999999
+            data[user]["points"] -= error_tax
+            data[ctx.author.name.lower()]["points"] += error_tax
+            total_tax += error_tax
+    
+    await ctx.send(f"The president collected {total_tax} points worth of tax")
+    bank_data["tax_cooldown"] = 1200
+
+    with open(bank_path, "w") as json_file:
+        json.dump(bank_data, json_file,indent=4)
+    with open(points, "w") as json_file:
+        json.dump(data, json_file,indent=4)
