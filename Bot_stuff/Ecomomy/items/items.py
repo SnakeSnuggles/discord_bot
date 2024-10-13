@@ -2,6 +2,21 @@ from .item_class import *
 from ...Utls.bot_init import *
 from ...Utls.bank import *
 
+'''
+How I want this to work because this is garbage
+
+- Rather than using a class which is unnessisary it should just be a function
+- There should an item wrapper that adds a name value defined when wrapper is called to the dictionary and the function itself to the dictionary
+- All vars declared in an item class will just be in the use function so all funtions can just use them
+- There should also be some other specified values like unlimited_use or rarity if I ever get around to dealing with that
+{"name":function}
+
+@item("helm of stitistical advantage",unlimited_use=True)
+def hosa():
+    ...
+
+
+'''
 class pokeball(item):
     async def item_function(self, ctx):
         data = open_file(points_P)

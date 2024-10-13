@@ -16,7 +16,6 @@ class item:
     async def item_function(self,ctx):
         await ctx.send("It did nothing")
 
-
 @tasks.loop(seconds=1)
 async def catch_cooldown():
     user_data = open_file("points.json")

@@ -92,6 +92,7 @@ async def shop(ctx, *args):
         string = '\n'.join(string)
         await ctx.send(f"**Shop: **\nPoints: {points} \n```{string}```")
     save_file(points_P,data)
+
 @bot.command()
 async def pokemon(ctx,*args):
     args = " ".join(args)

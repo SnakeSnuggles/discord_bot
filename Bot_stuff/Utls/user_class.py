@@ -51,7 +51,7 @@ class User_class():
 
         self.save_to_points()
     def add_arb(self, key, add_amount):
-        if type(add_amount) != int:
+        if not isinstance(add_amount,int):
             raise Exception("Can not put a non int value into the points feild")
         if key not in self.user_data:
             raise Exception("That key does not exist in the user")
@@ -64,7 +64,7 @@ class User_class():
         return self.user_data[key]
 
     def add_points(self, points):
-        if type(points) != int:
+        if not isinstance(points,int):
             raise Exception("Can not put a non int value into the points feild")
 
         if points < 0:
@@ -74,4 +74,3 @@ class User_class():
         self.user_data["points"] += points
          
         self.save_to_points()
-

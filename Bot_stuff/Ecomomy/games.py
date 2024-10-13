@@ -200,16 +200,18 @@ async def rps(ctx,d = None):
 
 @bot.command()
 async def hangman(ctx):
-
-
-    if users[ctx.author.name.lower()].add_points(-5000):
+    user_object = users[ctx.author.name.lower()]
+    if user_object.add_points(-5000):
        await ctx.send("You need 5000 points to play")
        return
-
 
     list_of_words = ['fart','jump', 'act','answer', 'approve', 'arrange', 'break', 'build', 'buy', 'coach', ' colour', 'cough', 'create', 'complete', 'cry', 'dance', 'describe', 'draw', 'drink', 'eat', 'edit', 'enter', 'exit', 'imitate', 'invent', 'jump', 'laugh', 'lie', 'listen', 'paint', 'plan', 'play', 'read', 'replace', 'run', 'scream', 'see', 'shout', 'sing', 'skip', 'sleep', 'sneeze', 'solve', 'study', 'teach', 'touch', 'turn', 'walk', 'win', 'write', 'whistle', 'yank', 'zip',"abcdefghijklmnopqrstuvwxyz"]
     word = random.choice(list_of_words) 
 
+    if "Helm of Statistical Advantage" in user_object.get("inventory") and user_object.get("helm_on"):
+        DM = await ctx.author.create_dm()
+        await DM.send(word)
+        
     chances = 6
     revealed = "-" * len(word)
     won = False
