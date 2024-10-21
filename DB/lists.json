@@ -120,5 +120,6 @@
         " Make a fight ring (fight in fight ring to get money and bet on fighters)",
         "add homelessness",
         "add more functions to !addadd and !setset like all(everyone). x or * to multiply what they have by what you put. / to divide what they have by what you put"
-    ]
+    ],
+    "Journal": []
 }

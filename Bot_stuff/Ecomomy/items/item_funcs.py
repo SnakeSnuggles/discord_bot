@@ -3,9 +3,7 @@ from .items import *
 
 @bot.command()
 async def inventory(ctx):
-    data = open_file(points_P)
-
-    inv = data[ctx.author.name.lower()]["inventory"]
+    inv = users[ctx.author.name.lower()].get("inventory")
     inv = "\n".join(inv)
     await ctx.send("Inventory:\n```" + inv + "```")
 
@@ -14,8 +12,11 @@ async def use(ctx,*args):
     args = " ".join(args)
     args = args.split(",")
 
-    data = open_file(points_P)
     user = ctx.author.name.lower()
+
+    user_object = users[user]
+
+    inv = user_object.get("inventory")
     def used_on_real():
         try:
             used_on = args[1]
@@ -23,45 +24,24 @@ async def use(ctx,*args):
         except IndexError:
             pass
     used_on = used_on_real()
-    pokeballinst = pokeball(user=user,used_on=used_on)
-    guninst = gun(user=user,has_inlimited_uses=True,rarity=1.1)
-#    fanum_taxinst = fanum_tax(user=user,used_on=used_on,has_inlimited_uses=True,has_more_functions=True,rarity=1.1)
-    uselessnessinst = item(user=user)
-    statistical_advantageinst = statistical_advantage(user=user,has_inlimited_uses=True,rarity=1.1)
-    emoji_guninst = emoji_gun(user=user,has_inlimited_uses=True,rarity=-5)
-    spooninst = spoon(user=user,used_on=used_on,has_inlimited_uses=True,rarity=-5)
-    insult_guninst = insult_gun(user=user,used_on=used_on,has_inlimited_uses=True,rarity=15)
-    ecomomy_restartinst = economy_reset_idol(user=user,rarity=15)
-    items = {
-        "pokeball":pokeballinst,
-        "gun":guninst,
-      #  "fanum tax wand":fanum_taxinst,
-        "Uselessness":uselessnessinst,
-        "Helm of Statistical Advantage":statistical_advantageinst,
-        "Emoji gun":emoji_guninst,
-        "Insult gun":insult_guninst,
-        "spoon":spooninst,
-        "Economy reset idol":ecomomy_restartinst
-    }
-
+    
     if args[0] not in items:
         await ctx.send("That item does not exist")
         return
-    if args[0] not in data[user]["inventory"]:
+    if args[0] not in inv:
         await ctx.send("You do not have that item")
         return
-    if items[args[0]].used_on != None:
-        if args[1] not in data:
+    if items[args[0]]["used_on"] != None:
+        if args[1] not in users:
             await ctx.send("That user does not exist")
             return
 
-    if items[args[0]].has_inlimited_uses == False:
-        data[user]["inventory"].remove(args[0])
-    save_file(points_P,data)
-    if items[args[0]].has_more_functions == True:
-        await items[args[0]].item_function(ctx=ctx,function=args[2])
+    if items[args[0]]["unlimited_use"] == False:
+        user_object.remove_inventory(args[0])
+    if items[args[0]]["has_more_functions"] == True:
+        await items[args[0]]["item_func"](ctx=ctx,function=args[2])
     else:
-        await items[args[0]].item_function(ctx=ctx)
+        await items[args[0]]["item_func"](ctx=ctx)
 
 @bot.command()
 async def shop(ctx, *args):

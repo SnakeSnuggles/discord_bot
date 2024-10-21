@@ -1,4 +1,4 @@
-from Bot_stuff.Ecomomy.items.items import statistical_advantage
+from Bot_stuff.Ecomomy.items.items import *
 from ...Utls.bot_init import *
 from ...Utls.bank import *
 

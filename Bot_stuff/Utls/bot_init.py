@@ -25,9 +25,6 @@ with open(bot_token_file, 'r') as file:
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
-
-
-
 def run_in_script_directory(func):
     def wrapper(*args, **kwargs):
         original_directory = os.getcwd()

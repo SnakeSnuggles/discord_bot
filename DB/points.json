@@ -2,12 +2,12 @@
     "snakesnuggles": {
         "points": 5036586768688837464810318045848135992800570262312831079396616438559631660,
         "inventory": [
-            "Helm of Statistical Advantage",
             "Emoji gun",
+            "HOSA",
             "spoon"
         ],
         "win_streak_rps": 2,
-        "helm_on": true,
+        "helm_on": false,
         "has_voted": false,
         "voted_for": null,
         "votes": 0,
@@ -21,7 +21,7 @@
         ]
     },
     "cheese2144": {
-        "points": 4574889963037705126393966607454087995551975208898512604054525292794465759679773884997680432126227367535829768474106560,
+        "points": 4574889963037705126393966607454087995551975208898512604054525292794465759679773884997680432126227367535829768474111560,
         "inventory": [
             "fanum tax wand",
             "kitchen knife",
@@ -304,6 +304,40 @@
         ]
     },
     "vankington_salsa": {
+        "points": 0,
+        "inventory": [],
+        "win_streak_rps": 0,
+        "helm_on": false,
+        "has_voted": false,
+        "voted_for": null,
+        "votes": 0,
+        "titles": [],
+        "lir_data": 0,
+        "catch cooldown": 0,
+        "has_used_day_thing": [
+            false,
+            false,
+            false
+        ]
+    },
+    "nightlight_officialalt": {
+        "points": 0,
+        "inventory": [],
+        "win_streak_rps": 0,
+        "helm_on": false,
+        "has_voted": false,
+        "voted_for": null,
+        "votes": 0,
+        "titles": [],
+        "lir_data": 0,
+        "catch cooldown": 0,
+        "has_used_day_thing": [
+            false,
+            false,
+            false
+        ]
+    },
+    "jayjayf10": {
         "points": 0,
         "inventory": [],
         "win_streak_rps": 0,

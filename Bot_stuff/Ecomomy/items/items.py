@@ -1,11 +1,8 @@
-from .item_class import *
 from ...Utls.bot_init import *
 from ...Utls.bank import *
 
 '''
-How I want this to work because this is garbage
-
-- Rather than using a class which is unnessisary it should just be a function
+- Rather than using a class which is unnessisary it should just be a decorator
 - There should an item wrapper that adds a name value defined when wrapper is called to the dictionary and the function itself to the dictionary
 - All vars declared in an item class will just be in the use function so all funtions can just use them
 - There should also be some other specified values like unlimited_use or rarity if I ever get around to dealing with that
@@ -15,9 +12,39 @@ How I want this to work because this is garbage
 def hosa():
     ...
 
-
 '''
-class pokeball(item):
+
+items = {}
+def item(name:str, used_on=None, has_more_functions=False, unlimited_use:bool=False, rarity:float=0):
+
+    def item_dec(func): items[name] = {"item_func":func,"used_on":used_on,"unlimited_use":unlimited_use,"has_more_functions":has_more_functions}
+
+    return item_dec
+
+@item("HOSA",unlimited_use=True,rarity=5000)
+async def hosa(ctx):
+        user_object = users[ctx.author.name.lower()]
+        user_object.modify("helm_on", not user_object.get("helm_on"))
+        if user_object.get("helm_on") == True:
+            await ctx.send("Helm is now on")
+        elif user_object.get("helm_on") == False:
+            await ctx.send("Helm is now off")
+
+@item("Emoji gun",unlimited_use=True,rarity=5)
+async def emoji_gun(ctx):
+        emojis = ["😀","😃","😄","😁","😆","🥹","😅","😂","🤣","🥲","☺️","😊","😇","🙂","🙃","😉","😌","😍","🥰","😘","😗","😙","😚","😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🥸","🤩","🥳","😏","😒","😞","😔","😟","😕","☹️","🙁","😣","😖","🤬","😡","😠","😤","😤","😭","😢","🥺","😩","😫","🤯","😳","🥵","🥶","😶‍🌫️","😱","😨","😰","😥","🫠","🤫","🫡","🫢","🤭","🫣","🤔","🤗","😓","🤥","😶","🫥","😐","🫤","😑","😬","🙄","😯","😮‍💨","😪","🤤","😴","🥱","😲","😮","😦","😧","😵","😵‍💫","🤐","🥴","🤢","🤮","🤧","😷","🤒","💩","🤡","👺","👹","👿","😈","🤠","🤑","🤕","👻","👻","💀","☠️","👽","👾","🤖","🎃","😺","😸","🤲","🫶","😾","😿","🙀","😽","😼","😻","😹","👐","👐","🙌","👏","🤝","👍","👎","👊","✊","🤛","🤏","🤌","👌","🤘","🤟","🫰","✌️","🤞","🤜","🫳","🫴","👈","👉","👆","👇","☝️","✋","🤚","🖐️","🖖","👋","🤙","🫲","🫱","💪","🦾","🖕","👄","💋","💄","🦿","🦵","🦶","🫵","🙏","✍️","🫦","🦷","👅","👂","🦻","👃","👣","👁️","👀","🧒","👶","🫂","👥","👤","🗣️","🧠","🫁","🫀"]
+        choice = random.randint(0,len(emojis)-1)
+        if ctx.author.name.lower() == "elichat3025":
+            DM = await ctx.author.create_dm()
+            await DM.send(emojis[choice])
+            return
+        await ctx.send(emojis[choice])
+
+
+
+
+
+class pokeball(Item):
     async def item_function(self, ctx):
         data = open_file(points_P)
         
@@ -46,7 +73,7 @@ class pokeball(item):
 
         save_file(points_P,data)
 
-class gun(item):
+class gun(Item):
     async def item_function(self, ctx):
         user_object = users[ctx.author.name.lower()]
 
@@ -73,7 +100,6 @@ class gun(item):
             user_object.inventory_remove(item)
 
 
-
 # class fanum_tax(item):
 #     async def item_function(self, ctx,function:str):
 #         data = open_file(points_P)
@@ -93,15 +119,8 @@ class gun(item):
 #         else:
 #             await ctx.send("That function does not exist")
 #         save_file(points_P,data)
-class statistical_advantage(item):
-    async def item_function(self, ctx):
-        user_object = users[self.user]
-        user_object.modify("helm_on", not user_object.get("helm_on"))
-        if user_object.get("helm_on") == True:
-            await ctx.send("Helm is now on")
-        elif user_object.get("helm_on") == False:
-            await ctx.send("Helm is now off")
-class spoon(item):
+
+class spoon(Item):
     async def item_function(self, ctx):
             
         if self.used_on not in users:
@@ -115,17 +134,7 @@ class spoon(item):
         await ctx.send(f"You ate 10% of {self.used_on}'s points or {ten_percent} points. The bank stole them though")
         await send_to_bank(ten_percent, ctx)
 
-class emoji_gun(item):
-    async def item_function(self, ctx):
-        emojis = ["😀","😃","😄","😁","😆","🥹","😅","😂","🤣","🥲","☺️","😊","😇","🙂","🙃","😉","😌","😍","🥰","😘","😗","😙","😚","😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🥸","🤩","🥳","😏","😒","😞","😔","😟","😕","☹️","🙁","😣","😖","🤬","😡","😠","😤","😤","😭","😢","🥺","😩","😫","🤯","😳","🥵","🥶","😶‍🌫️","😱","😨","😰","😥","🫠","🤫","🫡","🫢","🤭","🫣","🤔","🤗","😓","🤥","😶","🫥","😐","🫤","😑","😬","🙄","😯","😮‍💨","😪","🤤","😴","🥱","😲","😮","😦","😧","😵","😵‍💫","🤐","🥴","🤢","🤮","🤧","😷","🤒","💩","🤡","👺","👹","👿","😈","🤠","🤑","🤕","👻","👻","💀","☠️","👽","👾","🤖","🎃","😺","😸","🤲","🫶","😾","😿","🙀","😽","😼","😻","😹","👐","👐","🙌","👏","🤝","👍","👎","👊","✊","🤛","🤏","🤌","👌","🤘","🤟","🫰","✌️","🤞","🤜","🫳","🫴","👈","👉","👆","👇","☝️","✋","🤚","🖐️","🖖","👋","🤙","🫲","🫱","💪","🦾","🖕","👄","💋","💄","🦿","🦵","🦶","🫵","🙏","✍️","🫦","🦷","👅","👂","🦻","👃","👣","👁️","👀","🧒","👶","🫂","👥","👤","🗣️","🧠","🫁","🫀"]
-        choice = random.randint(0,len(emojis)-1)
-        if ctx.author.name.lower() == "elichat3025":
-            DM = await ctx.author.create_dm()
-            await DM.send(emojis[choice])
-            return
-        await ctx.send(emojis[choice])
-
-class insult_gun(item):
+class insult_gun(Item):
     async def item_function(self, ctx):
         used_on = discord.utils.get(ctx.guild.members, name=self.used_on)
         insults = [f"{used_on.mention}, you gigglebox"]
@@ -134,7 +143,7 @@ class insult_gun(item):
 
         await DM.send(insults[choice])
 
-class economy_reset_idol(item):
+class economy_reset_idol(Item):
     async def item_function(self, ctx):
         
         await ctx.send("By the power of points I guess the economy will be reset")

@@ -1,6 +1,6 @@
 from ...Utls.bot_init import *
 
-class item:
+class Item:
     def __init__(self,
                  user:str,
                  used_on:str = None,
@@ -27,3 +27,4 @@ async def catch_cooldown():
             user_data[user]["catch cooldown"] -= 1
     with open("points.json","w") as json_file:
         json.dump(user_data,json_file,indent=4)
+

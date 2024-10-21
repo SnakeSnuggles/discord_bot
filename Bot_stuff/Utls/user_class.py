@@ -61,7 +61,8 @@ class User_class():
     def get(self,key):
         if key not in self.user_data:
             raise Exception("That key does not exist in user data")
-        return self.user_data[key]
+        all_data = open_file(points_P)
+        return all_data[self.user_name][key]
 
     def add_points(self, points):
         if not isinstance(points,int):
